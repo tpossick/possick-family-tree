@@ -986,7 +986,7 @@ var QF_OPS={
 };
 function addFilter(){QF_FILTERS.push({field:"firstName",op:"contains",value:""});render();}
 function removeFilter(i){QF_FILTERS.splice(i,1);render();}
-function setFilter(i,k,v){QF_FILTERS[i][k]=v;if(k==="field"){var ops=QF_OPS[v];QF_FILTERS[i].op=ops?ops[0]:"=";QF_FILTERS[i].value="";}render();}
+function setFilter(i,k,v){QF_FILTERS[i][k]=v;if(k==="field"){var ops=QF_OPS[v];QF_FILTERS[i].op=ops?ops[0]:"=";QF_FILTERS[i].value=(v==="generation"?"2":"");}render();}
 function toggleCol(c){var i=QF_COLS.indexOf(c);if(i>=0)QF_COLS.splice(i,1);else QF_COLS.push(c);render();}
 function moveColLeft(c){var i=QF_COLS.indexOf(c);if(i>0){QF_COLS.splice(i,1);QF_COLS.splice(i-1,0,c);}render();}
 function moveColRight(c){var i=QF_COLS.indexOf(c);if(i>=0&&i<QF_COLS.length-1){QF_COLS.splice(i,1);QF_COLS.splice(i+1,0,c);}render();}
@@ -999,7 +999,7 @@ function applyAllFilters(){
       case"firstName":{const s=p.firstName.toLowerCase();if(f.op==="contains")return s.includes(v);if(f.op==="equals")return s===v;if(f.op==="starts with")return s.startsWith(v);if(f.op==="ends with")return s.endsWith(v);return true;}
       case"lastName":{const s=(p.lastName||"").toLowerCase();if(f.op==="contains")return s.includes(v);if(f.op==="equals")return s===v;if(f.op==="starts with")return s.startsWith(v);if(f.op==="ends with")return s.endsWith(v);return true;}
       case"hebrewName":{return(p.hebrewName||"").toLowerCase().includes(v);}
-      case"generation":{const g=p.generation;const n=+v;if(f.op==="=")return g===n;if(f.op==="<")return g<n;if(f.op==="<=")return g<=n;if(f.op===">")return g>n;if(f.op===">=")return g>=n;return true;}
+      case"generation":{const g=p.generation;const n=+v;if(isNaN(n))return false;if(f.op==="=")return g===n;if(f.op==="<")return g<n;if(f.op==="<=")return g<=n;if(f.op===">")return g>n;if(f.op===">=")return g>=n;return false;}
       case"gender":return f.value===""||p.gender===f.value;
       case"blood":return f.value===""||String(p.blood)===(f.value==="true"?"true":"false");
       case"hasDOB":return f.value===""||Boolean(p.dob)===(f.value==="true");
@@ -1014,7 +1014,7 @@ function applyAllFilters(){
       case"missingHebDOB":return Boolean(p.dob&&!p.hebMonth)===(f.value==="true");
       case"missingAnn":return Boolean(p.gender==="Male"&&p.spouseId&&!p.annDate)===(f.value==="true");
       case"isDupe":{const k=p.firstName+(p.nickName&&!/A\"H|Z\"L/i.test(p.nickName)?" ("+p.nickName+")":"")+(p.maidenName?" "+p.maidenName:"")+" "+p.lastName;const cnt=P.filter(x=>{const xk=x.firstName+(x.nickName&&!/A\"H|Z\"L/i.test(x.nickName)?" ("+x.nickName+")":"")+(x.maidenName?" "+x.maidenName:"")+" "+x.lastName;return xk===k;}).length;return f.value==="true"?cnt>1:cnt===1;}
-      case"hasSpouse":return f.value===""||Boolean(p.spouseId)===(f.value==="true");
+      case"hasSpouse":{var spEx=!!(p.spouseId&&P.find(function(x){return x.id===p.spouseId;}));return f.value===""||spEx===(f.value==="true");}
       case"deceased":return f.value===""||Boolean(p.deceased||p.yartzheit)===(f.value==="true");
       default:return true;
     }
@@ -1114,8 +1114,13 @@ function rptQuery(){
       valHtml="<select onchange='setFilter("+i+",\"value\",this.value)'><option value=''>All</option><option value='Male'"+(f.value==="Male"?" selected":"")+">Male</option><option value='Female'"+(f.value==="Female"?" selected":"")+">Female</option></select>";
     } else if(f.field==="family"){
       valHtml="<select onchange='setFilter("+i+",\"value\",this.value)'><option value=''>All</option>"+FAM.map(function(fm){return"<option value='"+fm.n+"'"+(f.value==String(fm.n)?" selected":"")+">"+esc(fm.full)+"</option>";}).join("")+"</select>";
+    } else if(f.field==="generation"){
+      var gnOpts=[["0","Parents"],["1","Children"],["2","Grandchildren"],["3","Great-Grandchildren"],["4","Gt-Gt-Grandchildren"]];
+      valHtml="<select onchange='setFilter("+i+",\"value\",this.value)'>";
+      gnOpts.forEach(function(g){valHtml+='<option value="'+g[0]+'"'+(f.value===g[0]?" selected":"")+">"+g[1]+"</option>";});
+      valHtml+="</select>";
     } else {
-      var isNum=["age","ageMin","ageMax","generation","upcomingDays"].indexOf(f.field)>=0;
+      var isNum=["age","ageMin","ageMax","upcomingDays"].indexOf(f.field)>=0;
       valHtml="<input type='"+(isNum?"number":"text")+"' value='"+esc(f.value)+"' style='width:100px' oninput='setFilter("+i+",\"value\",this.value)' placeholder='value'>";
     }
     filterRows+="<div style='display:flex;gap:5px;align-items:center;margin-bottom:3px'>"
