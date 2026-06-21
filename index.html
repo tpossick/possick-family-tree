@@ -139,6 +139,8 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -496,7 +498,42 @@ function renderForm(){
   const carrO=CARS.map(c=>"<option value='"+esc(c)+"'"+(f.carrier===c?" selected":"")+">"+esc(c||"&mdash; Select &mdash;")+"</option>").join("");
   const banner=FP?"<div class='qb'><div class='qbl'><strong>"+esc(FP)+"</strong><br><span style='font-size:11px;color:#cce'>Parents, code, family & generation pre-filled.</span></div><button class='btn c sm' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button><button onclick='navP(-1)' style='margin-left:6px' title='Prev person'>&#9664; Prev</button><button onclick='navP(1)' title='Next person'>Next &#9654;</button></div>":"";
   const sp=isEdit&&f.spouseId?P.find(p=>p.id===f.spouseId):null;
-  const spBox=sp?"<div class='ff'><label class='ffl'>Spouse</label><div style='padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:11px'>"+esc(sp.firstName+" "+sp.lastName)+"</div></div>":isEdit?"<div class='ff'><label class='ffl'>Spouse</label><button class='btn p sm' style='margin-top:2px' onclick='addSpouseFor("+f.id+")'>+ Add Spouse</button><div style='font-size:10px;color:#888;margin-top:3px'>No spouse on record</div></div>":"";
+  // Spouse search dropdown results
+  var spSearchRes="";
+  if(SPOUSE_SEARCH&&SPOUSE_SEARCH.length>1){
+    var spHits=P.filter(function(x){
+      return x.id!==f.id&&!x.spouseId&&
+        (x.firstName+" "+x.lastName).toLowerCase().includes(SPOUSE_SEARCH.toLowerCase());
+    }).slice(0,8);
+    spSearchRes=spHits.map(function(x){
+      return "<div onclick='linkSpouse("+x.id+")' "
+        +"style='padding:6px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px' "
+        +"onmouseover='this.style.background=\"#f0f4ff\"' onmouseout='this.style.background=\"\"'>"  
+        +esc(x.firstName+" "+x.lastName)+" <span style='color:#aaa;font-size:11px'>("+esc(x.code||"")+")</span></div>";
+    }).join("");
+  }
+  const spBox=isEdit?(
+    sp?
+    "<div class='ff'><label class='ffl'>Spouse</label>"
+    +"<div style='display:flex;align-items:center;gap:6px'>"
+    +"<div style='flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:11px'>"  
+    +esc(sp.firstName+" "+sp.lastName)
+    +"</div><button class='btn d sm' onclick='unlinkSpouse()' title='Remove spouse link'>Unlink</button></div></div>"
+    :
+    "<div class='ff'><label class='ffl'>Spouse</label>"
+    +"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-top:2px'>"
+    +"<button class='btn p sm' onclick='addSpouseFor("+f.id+")'>+ Add New Person</button>"
+    +"<button class='btn n sm' onclick='SPOUSE_SEARCH=\" \";render()'>&#128279; Link Existing</button>"
+    +"</div>"
+    +(SPOUSE_SEARCH!==undefined&&SPOUSE_SEARCH.trim()!==""?
+      "<div style='position:relative;margin-top:6px'>"
+      +"<input class='ffi' placeholder='Type name to search...' value='"+esc(SPOUSE_SEARCH)+"'  "
+      +"oninput='setSpouseSearch(this.value)' style='width:100%;box-sizing:border-box'>"
+      +(spSearchRes?"<div style='position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;z-index:20;max-height:200px;overflow-y:auto'>"+spSearchRes+"</div>":"")
+      +"</div>"
+    :"")
+    +"</div>"
+  ):"";
   const yartzFields=f.yartzheit?"<input class='ffi' type='date' style='margin-top:4px' value='"+( f.yartzdob||"")+"' onchange='updYartz(this.value)'><label class='chk' style='margin-top:4px'><input type='checkbox' "+(f.sunsetYartz?"checked":"")+" onchange='FORM.sunsetYartz=this.checked;if(FORM.yartzdob)updYartz(FORM.yartzdob)'> After sunset</label><div class='hbox' id='ydb' style='margin-top:4px;font-size:13px'>"+(f.yartzHebDate||"<span style='color:#bbb;font-size:10px'>Enter date to auto-fetch</span>")+"</div>":"";
   return banner+"<div class='panel'><div class='ph'><span>"+(isEdit?"Edit Person":"Add New Person")+"</span><div style='display:flex;gap:6px'><button class='btn s sm' onclick='doSave()'>Save</button>"+(isEdit?"<button class='btn teal sm' onclick='uploadPhoto("+f.id+")' title='Add or view photos'>📸 Photos</button>":"")+""+(isEdit?"<button class='btn d sm' onclick='doDelete()'>Delete</button>":"")+"<button class='btn c sm' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button></div></div><div class='fb'>"
   +"<div class='fs'><div class='fst'>Position &amp; Classification</div><div class='fsb' style='align-items:end'>"
@@ -822,7 +859,7 @@ var PS={fs:12,top:0.40,side:0.50,bot:0.30};
 function applyPrintCSS(){var s=document.getElementById("prcss")||document.createElement("style");s.id="prcss";s.textContent="@page{margin-top:"+PS.top+"in;margin-right:"+PS.side+"in;margin-bottom:"+PS.bot+"in;margin-left:"+PS.side+"in;size:letter portrait;}.rb2{font-size:"+PS.fs+"pt!important;line-height:1.25!important;}.rline{min-height:1.1em!important;padding:0!important;line-height:1.25!important;}.rtit{font-size:"+(PS.fs+4)+"pt!important;}.rfam{font-size:"+(PS.fs+2)+"pt!important;}.rmo-heb{font-size:"+(PS.fs+6)+"pt!important;}.heb,.heb-i{font-size:"+PS.fs+"pt!important;}";document.head.appendChild(s);}
 function doPrint(){applyPrintCSS();window.print();}
 function cprint(){PS={fs:11,top:0.35,side:0.45,bot:0.25};applyPrintCSS();window.print();PS={fs:12,top:0.40,side:0.50,bot:0.30};}
-var SHOW_PS=false,RPT_NAME_MODE="both",LAST_SYNC="";
+var SHOW_PS=false,RPT_NAME_MODE="both",LAST_SYNC="",SPOUSE_SEARCH="";
 var ANNOUNCE=null; // active announcement panel state
 var NOTIFY_OPEN=false; // daily notification queue open
 var SYNC_STATE="online"; // "online"|"offline"|"conflict"
@@ -1963,6 +2000,26 @@ function doLogout(){
   });
 }
 
+function setSpouseSearch(val){SPOUSE_SEARCH=val;render();}
+function linkSpouse(existingId){
+  var other=P.find(function(x){return x.id===existingId;});
+  if(!other)return;
+  FORM.spouseId=existingId;
+  // Bidirectional: update the other person's spouseId too
+  P=P.map(function(p){return p.id===existingId?Object.assign({},p,{spouseId:FORM.id}):p;});
+  SPOUSE_SEARCH="";
+  scheduleSave();
+  render();
+  toast(other.firstName+" linked as spouse",false);
+}
+function unlinkSpouse(){
+  var oldId=FORM.spouseId;
+  FORM.spouseId=null;
+  // Remove the link from the other person too
+  if(oldId)P=P.map(function(p){return p.id===oldId?Object.assign({},p,{spouseId:null}):p;});
+  scheduleSave();render();
+}
+
 (function startApp(){
   var ok=initFirebase();
   if(!ok){render();return;}
@@ -1994,6 +2051,8 @@ function doLogout(){
     render();
   });
 })();
+
+
 
 
 
