@@ -142,6 +142,9 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
+
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -503,9 +506,10 @@ function renderForm(){
   var spSearchRes="";
   if(SPOUSE_SEARCH&&SPOUSE_SEARCH.length>1){
     var spHits=P.filter(function(x){
-      return x.id!==f.id&&!x.spouseId&&
-        (x.firstName+" "+x.lastName).toLowerCase().includes(SPOUSE_SEARCH.toLowerCase());
-    }).slice(0,8);
+      var q=SPOUSE_SEARCH.toLowerCase();
+      var fullName=(x.firstName+" "+(x.lastName||"")+" "+(x.nickName||"")).toLowerCase();
+      return x.id!==f.id&&fullName.includes(q);
+    }).slice(0,20);
     spSearchRes=spHits.map(function(x){
       return "<div onclick='linkSpouse("+x.id+")' "
         +"style='padding:6px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px' "
@@ -2003,22 +2007,34 @@ function doLogout(){
 
 function setSpouseSearch(val){SPOUSE_SEARCH=val;render();}
 function linkSpouse(existingId){
-  var other=P.find(function(x){return x.id===existingId;});
+  var other=P.find(function(x){return +x.id===+existingId;});
   if(!other)return;
+  var myId=FORM.id;
   FORM.spouseId=existingId;
-  // Bidirectional: update the other person's spouseId too
-  P=P.map(function(p){return p.id===existingId?Object.assign({},p,{spouseId:FORM.id}):p;});
+  // Update BOTH records in P bidirectionally
+  P=P.map(function(p){
+    if(+p.id===+myId)return Object.assign({},p,{spouseId:existingId});
+    if(+p.id===+existingId)return Object.assign({},p,{spouseId:myId});
+    return p;
+  });
   SPOUSE_SEARCH="";
   scheduleSave();
   render();
-  toast(other.firstName+" linked as spouse",false);
+  toast(other.firstName+" linked as spouse ✔",false);
 }
 function unlinkSpouse(){
+  var myId=FORM.id;
   var oldId=FORM.spouseId;
   FORM.spouseId=null;
-  // Remove the link from the other person too
-  if(oldId)P=P.map(function(p){return p.id===oldId?Object.assign({},p,{spouseId:null}):p;});
-  scheduleSave();render();
+  // Update BOTH records in P
+  P=P.map(function(p){
+    if(+p.id===+myId)return Object.assign({},p,{spouseId:null});
+    if(oldId&&+p.id===+oldId)return Object.assign({},p,{spouseId:null});
+    return p;
+  });
+  scheduleSave();
+  toast("Spouse unlinked",false);
+  render();
 }
 
 (function startApp(){
@@ -2052,6 +2068,9 @@ function unlinkSpouse(){
     render();
   });
 })();
+
+
+
 
 
 
