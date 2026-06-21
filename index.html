@@ -90,10 +90,12 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 </head>
 <body>
 <div class="header">
-  <div><h1>Possick Family Tree</h1><div class="hsub" id="hdr"></div></div>
+  <div><h1>Possick Family Tree</h1>
+  <button onclick="if(confirm('Sign out?'))doLogout()" style="background:none;border:none;color:rgba(255,255,255,0.4);font-size:11px;cursor:pointer;padding:2px 0;margin-left:8px" title="Sign out">Sign out</button><div class="hsub" id="hdr"></div></div>
   <div style="display:flex;align-items:center;gap:8px;"><span id="sync-status" style="font-size:11px;color:#e8c97a;font-family:inherit;"></span><div id="toast"></div></div>
 </div>
 <div class="nav">
@@ -105,6 +107,7 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 </div>
 <div class="main" id="main"><div style="text-align:center;padding:60px 20px;color:#888;font-family:serif"><div style="font-size:18px;color:#1a2744;margin-bottom:8px">Possick Family Tree</div><div style="font-size:13px">Connecting to Firebase…</div><div style="font-size:11px;margin-top:8px;color:#aaa">This may take a few seconds on first load</div></div></div>
 <script>
+
 
 
 
@@ -183,6 +186,7 @@ function initFirebase(){
     if(!firebase.apps.length)firebase.initializeApp(FB_CFG);
     db=firebase.firestore();
     // Persistence disabled — prevents stale cache overwriting live data
+    initAuth();
     return true;
   }catch(e){console.error("FB init:",e);return false;}
 }
@@ -1896,38 +1900,91 @@ function renderNotifyPanel(today,tom,todayHeb,tomHeb){
   panel.innerHTML=body;
 }
 
-(async function init(){
-  var ok=initFirebase();
-  var loaded=false;
-  // 10s timeout prevents indefinite hang on slow mobile networks
-  var timeout=new Promise(function(r){setTimeout(function(){r(false);},10000);});
-  if(ok)loaded=await Promise.race([loadFromCloud(),timeout]);
-  if(!loaded){
-    var migrated=await migrateFromLocalStorage();
-    if(!migrated){P=[];NID=INIT_NID;}
-    if(!migrated)setSyncStatus("offline");
+var auth=null;
+
+function initAuth(){
+  if(!firebase.apps.length)return;
+  auth=firebase.auth();
+  auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+}
+
+function showLoginScreen(errMsg){
+  var m=document.getElementById("main");
+  if(!m)return;
+  var err=errMsg?"<div style='background:#fde8e8;color:#c00;border-radius:5px;padding:10px;font-size:13px;margin-bottom:14px'>"+errMsg+"</div>":"";
+  m.innerHTML="<div style='min-height:80vh;display:flex;align-items:center;justify-content:center'>"
+    +"<div style='background:white;border-radius:10px;padding:32px;width:min(340px,92vw);box-shadow:0 4px 24px rgba(0,0,0,.15)'>"
+    +"<h2 style='color:#1a2744;margin:0 0 6px;text-align:center'>Possick Family Tree</h2>"
+    +"<p style='color:#888;font-size:13px;text-align:center;margin:0 0 20px'>Sign in to continue</p>"
+    +err
+    +"<div style='margin-bottom:12px'><label style='font-size:11px;font-weight:bold;color:#666;display:block;margin-bottom:4px'>EMAIL</label>"
+    +"<input id='login-email' type='email' autocomplete='email' style='width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #ccc;border-radius:5px;font-size:14px'></div>"
+    +"<div style='margin-bottom:20px'><label style='font-size:11px;font-weight:bold;color:#666;display:block;margin-bottom:4px'>PASSWORD</label>"
+    +"<input id='login-pw' type='password' autocomplete='current-password' style='width:100%;box-sizing:border-box;padding:9px 10px;border:1px solid #ccc;border-radius:5px;font-size:14px'></div>"
+    +"<button onclick='doLogin()' id='login-btn' style='width:100%;padding:11px;background:#1a2744;color:white;border:none;border-radius:6px;font-size:15px;cursor:pointer'>Sign In</button>"
+    +"</div></div>";
+  setTimeout(function(){
+    var pw=document.getElementById("login-pw");
+    var em=document.getElementById("login-email");
+    function tryLogin(e){if(e.key==="Enter")doLogin();}
+    if(pw)pw.addEventListener("keydown",tryLogin);
+    if(em){em.addEventListener("keydown",tryLogin);em.focus();}
+  },50);
+}
+
+async function doLogin(){
+  var email=(document.getElementById("login-email")||{}).value||"";
+  var pw=(document.getElementById("login-pw")||{}).value||"";
+  if(!email||!pw){showLoginScreen("Please enter your email and password.");return;}
+  var btn=document.getElementById("login-btn");
+  if(btn){btn.textContent="Signing in…";btn.disabled=true;}
+  try{
+    await auth.signInWithEmailAndPassword(email,pw);
+  }catch(e){
+    var msg="Sign in failed. Check your email and password.";
+    if(e.code==="auth/too-many-requests")msg="Too many attempts. Please try again later.";
+    showLoginScreen(msg);
   }
-  if(ok)startRealtimeSync();
-  setSyncStatus(P.length?"synced":"");
-  // Silent background fix: re-fetch hebMonth for records that have hebDate but not hebMonth
-  setTimeout(async function(){
-    var fixed=0;
-    for(var i=0;i<P.length;i++){
-      var p=P[i];
-      if(p.dob&&p.hebDate&&!p.hebMonth){
-        try{
-          var h=await fH(p.dob,p.sunset);
-          if(h&&h.hm){
-            P[i]=Object.assign({},p,{hebMonth:h.hm,hebMonthNum:h.monthNum,hebDay:h.hd,hebYear:h.hy});
-            fixed++;
-          }
-        }catch(e){}
-      }
+}
+
+function doLogout(){
+  if(auth)auth.signOut().then(function(){
+    P=[];render();showLoginScreen();
+  });
+}
+
+(function startApp(){
+  var ok=initFirebase();
+  if(!ok){render();return;}
+  auth.onAuthStateChanged(async function(user){
+    if(!user){showLoginScreen();return;}
+    var loaded=false;
+    var timeout=new Promise(function(r){setTimeout(function(){r(false);},10000);});
+    loaded=await Promise.race([loadFromCloud(),timeout]);
+    if(!loaded){
+      var migrated=await migrateFromLocalStorage();
+      if(!migrated){P=[];NID=INIT_NID;}
+      if(!migrated)setSyncStatus("offline");
     }
-    if(fixed>0){scheduleSave();console.log("Fixed hebMonth for "+fixed+" records");}
-  },3000);
-  render();
+    startRealtimeSync();
+    setSyncStatus(P.length?"synced":"");
+    setTimeout(async function(){
+      var fixed=0;
+      for(var i=0;i<P.length;i++){
+        var p=P[i];
+        if(p.dob&&p.hebDate&&!p.hebMonth){
+          try{
+            var h=await fH(p.dob,p.sunset);
+            if(h&&h.hm){P[i]=Object.assign({},p,{hebMonth:h.hm,hebMonthNum:h.monthNum,hebDay:h.hd,hebYear:h.hy});fixed++;}
+          }catch(e){}
+        }
+      }
+      if(fixed>0)scheduleSave();
+    },3000);
+    render();
+  });
 })();
+
 
 
 
