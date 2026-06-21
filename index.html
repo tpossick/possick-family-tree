@@ -107,23 +107,8 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 </div>
 <div class="main" id="main"><div style="text-align:center;padding:60px 20px;color:#888;font-family:serif"><div style="font-size:18px;color:#1a2744;margin-bottom:8px">Possick Family Tree</div><div style="font-size:13px">Connecting to Firebase…</div><div style="font-size:11px;margin-top:8px;color:#aaa">This may take a few seconds on first load</div></div></div>
 <script>
-function linkSpouse(myId,existingId){
-  if(!myId||!existingId)return;
-  var other=P.find(function(x){return +x.id===+existingId;});
-  if(!other)return;
-  // Update BOTH records in P
-  P=P.map(function(p){
-    if(+p.id===+myId)return Object.assign({},p,{spouseId:existingId});
-    if(+p.id===+existingId)return Object.assign({},p,{spouseId:myId});
-    return p;
-  });
-  // Also update FORM if we're still editing myId
-  if(FORM&&+FORM.id===+myId)FORM.spouseId=existingId;
-  SPOUSE_SEARCH="";
-  scheduleSave();
-  render();
-  toast(esc(other.firstName)+" linked as spouse \u2714",false);
-}
+
+
 
 
 
@@ -463,11 +448,6 @@ function render(){
     m.innerHTML=renderForm();
     if(VIEW==="edit"&&FORM&&FORM.id!=null)setTimeout(function(){renderPhotoStrip(FORM.id);},100);
     if(VIEW==="edit"&&FORM&&FORM.id!=null)setTimeout(function(){
-      // Refocus spouse search if it was open
-      if(SPOUSE_SEARCH!==""){
-        var si=document.getElementById('spouse-search-input');
-        if(si){si.focus();si.value=SPOUSE_SEARCH;setSpouseSearch(SPOUSE_SEARCH);}
-      }
       var ph=m.querySelector('.ph div');if(!ph)return;
       var prev=document.createElement('button');prev.className='btn n sm';prev.title='Prev';prev.innerHTML='&#9664; Prev';
       prev.onclick=function(){navP(-1);};
@@ -529,43 +509,10 @@ function renderForm(){
   const carrO=CARS.map(c=>"<option value='"+esc(c)+"'"+(f.carrier===c?" selected":"")+">"+esc(c||"&mdash; Select &mdash;")+"</option>").join("");
   const banner=FP?"<div class='qb'><div class='qbl'><strong>"+esc(FP)+"</strong><br><span style='font-size:11px;color:#cce'>Parents, code, family & generation pre-filled.</span></div><button class='btn c sm' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button><button onclick='navP(-1)' style='margin-left:6px' title='Prev person'>&#9664; Prev</button><button onclick='navP(1)' title='Next person'>Next &#9654;</button></div>":"";
   const sp=isEdit&&f.spouseId?P.find(p=>p.id===f.spouseId):null;
-  // Spouse search dropdown results
-  var spSearchRes="";
-  if(SPOUSE_SEARCH&&SPOUSE_SEARCH.length>1){
-    var spHits=P.filter(function(x){
-      var q=SPOUSE_SEARCH.toLowerCase();
-      var fullName=(x.firstName+" "+(x.lastName||"")+" "+(x.nickName||"")).toLowerCase();
-      return x.id!==f.id&&fullName.includes(q);
-    }).slice(0,20);
-    spSearchRes=spHits.map(function(x){
-      return "<div onclick='linkSpouse("+x.id+")' "
-        +"style='padding:6px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px' "
-        +"onmouseover='this.style.background=\"#f0f4ff\"' onmouseout='this.style.background=\"\"'>"  
-        +esc(x.firstName+" "+x.lastName)+" <span style='color:#aaa;font-size:11px'>("+esc(x.code||"")+")</span></div>";
-    }).join("");
-  }
-  const spBox=isEdit?(
-    sp?
-    "<div class='ff'><label class='ffl'>Spouse</label>"
-    +"<div style='display:flex;align-items:center;gap:6px'>"
-    +"<div style='flex:1;padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:11px'>"  
-    +esc(sp.firstName+" "+sp.lastName)
-    +"</div><button class='btn d sm' onclick='unlinkSpouse()' title='Remove spouse link'>Unlink</button></div></div>"
-    :
-    "<div class='ff'><label class='ffl'>Spouse</label>"
-    +"<div style='display:flex;gap:6px;flex-wrap:wrap;margin-top:2px'>"
-    +"<button class='btn p sm' onclick='addSpouseFor("+f.id+")'>+ Add New Person</button>"
-    +"<button class='btn n sm' onclick='SPOUSE_SEARCH=\" \";render()'>&#128279; Link Existing</button>"
-    +"</div>"
-    +(SPOUSE_SEARCH!==undefined&&SPOUSE_SEARCH!==""?
-      "<div style='position:relative;margin-top:6px'>"
-      +"<input class='ffi' placeholder='Type name to search...' value='"+esc(SPOUSE_SEARCH)+"'  "
-      +"oninput='setSpouseSearch(this.value)' style='width:100%;box-sizing:border-box'>"
-      +(spSearchRes?"<div style='position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;z-index:20;max-height:200px;overflow-y:auto'>"+spSearchRes+"</div>":"")
-      +"</div>"
-    :"")
-    +"</div>"
-  ):"";
+  const spBox=isEdit?(sp?
+    "<div class='ff'><label class='ffl'>Spouse</label><div style='padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:11px'>"+esc(sp.firstName+" "+sp.lastName)+"</div></div>":
+    "<div class='ff'><label class='ffl'>Spouse</label><button class='btn p sm' style='margin-top:2px' onclick='addSpouseFor("+f.id+")'>+ Add Spouse</button></div>"):"";
+
   const yartzFields=f.yartzheit?"<input class='ffi' type='date' style='margin-top:4px' value='"+( f.yartzdob||"")+"' onchange='updYartz(this.value)'><label class='chk' style='margin-top:4px'><input type='checkbox' "+(f.sunsetYartz?"checked":"")+" onchange='FORM.sunsetYartz=this.checked;if(FORM.yartzdob)updYartz(FORM.yartzdob)'> After sunset</label><div class='hbox' id='ydb' style='margin-top:4px;font-size:13px'>"+(f.yartzHebDate||"<span style='color:#bbb;font-size:10px'>Enter date to auto-fetch</span>")+"</div>":"";
   return banner+"<div class='panel'><div class='ph'><span>"+(isEdit?"Edit Person":"Add New Person")+"</span><div style='display:flex;gap:6px'><button class='btn s sm' onclick='doSave()'>Save</button>"+(isEdit?"<button class='btn teal sm' onclick='uploadPhoto("+f.id+")' title='Add or view photos'>📸 Photos</button>":"")+""+(isEdit?"<button class='btn d sm' onclick='doDelete()'>Delete</button>":"")+"<button class='btn c sm' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button></div></div><div class='fb'>"
   +"<div class='fs'><div class='fst'>Position &amp; Classification</div><div class='fsb' style='align-items:end'>"
@@ -891,7 +838,7 @@ var PS={fs:12,top:0.40,side:0.50,bot:0.30};
 function applyPrintCSS(){var s=document.getElementById("prcss")||document.createElement("style");s.id="prcss";s.textContent="@page{margin-top:"+PS.top+"in;margin-right:"+PS.side+"in;margin-bottom:"+PS.bot+"in;margin-left:"+PS.side+"in;size:letter portrait;}.rb2{font-size:"+PS.fs+"pt!important;line-height:1.25!important;}.rline{min-height:1.1em!important;padding:0!important;line-height:1.25!important;}.rtit{font-size:"+(PS.fs+4)+"pt!important;}.rfam{font-size:"+(PS.fs+2)+"pt!important;}.rmo-heb{font-size:"+(PS.fs+6)+"pt!important;}.heb,.heb-i{font-size:"+PS.fs+"pt!important;}";document.head.appendChild(s);}
 function doPrint(){applyPrintCSS();window.print();}
 function cprint(){PS={fs:11,top:0.35,side:0.45,bot:0.25};applyPrintCSS();window.print();PS={fs:12,top:0.40,side:0.50,bot:0.30};}
-var SHOW_PS=false,RPT_NAME_MODE="both",LAST_SYNC="",SPOUSE_SEARCH="";
+var SHOW_PS=false,RPT_NAME_MODE="both",LAST_SYNC="";
 var ANNOUNCE=null; // active announcement panel state
 var NOTIFY_OPEN=false; // daily notification queue open
 var SYNC_STATE="online"; // "online"|"offline"|"conflict"
@@ -2032,61 +1979,11 @@ function doLogout(){
   });
 }
 
-function setSpouseSearch(val){
-  SPOUSE_SEARCH=val;
-  var inp=document.getElementById("spouse-search-input");
-  if(!inp)return;
-  var myId=FORM?FORM.id:null; // capture NOW — don't rely on FORM at click time
-  var rd=document.getElementById("spouse-search-results");
-  if(!rd){
-    rd=document.createElement("div");
-    rd.id="spouse-search-results";
-    rd.style.cssText="background:white;border:1px solid #ccc;border-radius:4px;"
-      +"max-height:220px;overflow-y:auto;margin-top:2px;box-shadow:0 4px 12px rgba(0,0,0,0.15)";
-    inp.parentNode.insertBefore(rd,inp.nextSibling);
-  }
-  if(!val||val.trim().length<1){rd.innerHTML="";return;}
-  var q=val.toLowerCase();
-  var hits=P.filter(function(x){
-    var n=((x.firstName||"")+" "+(x.lastName||"")+" "+(x.nickName||"")).toLowerCase();
-    return +x.id!==+myId&&n.indexOf(q)>=0;
-  }).slice(0,20);
-  if(!hits.length){
-    rd.innerHTML="<div style='padding:10px;color:#aaa;font-size:13px'>No matches for \""+esc(val)+"\"</div>";
-    return;
-  }
-  // Embed BOTH IDs in onclick — myId locked in now, not at click time
-  rd.innerHTML=hits.map(function(x){
-    var linked=x.spouseId?"<span style='color:#c88;font-size:10px'> (already linked)</span>":"";
-    return "<div onclick='linkSpouse("+myId+","+x.id+")' "
-      +"style='padding:8px 12px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px'>"
-      +esc(x.firstName+" "+x.lastName)
-      +"<span style='color:#aaa;font-size:11px;margin-left:6px'>("+esc(x.code||"")+")</span>"
-      +linked+"</div>";
-  }).join("");
-}
 
 
-function refocusSpouseSearch(){
-  setTimeout(function(){
-    var inp=document.getElementById('spouse-search-input');
-    if(inp)inp.focus();
-  },30);
-}
-function unlinkSpouse(){
-  var myId=FORM.id;
-  var oldId=FORM.spouseId;
-  FORM.spouseId=null;
-  // Update BOTH records in P
-  P=P.map(function(p){
-    if(+p.id===+myId)return Object.assign({},p,{spouseId:null});
-    if(oldId&&+p.id===+oldId)return Object.assign({},p,{spouseId:null});
-    return p;
-  });
-  scheduleSave();
-  toast("Spouse unlinked",false);
-  render();
-}
+
+
+
 
 (function startApp(){
   var ok=initFirebase();
@@ -2119,6 +2016,7 @@ function unlinkSpouse(){
     render();
   });
 })();
+
 
 
 
