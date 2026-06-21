@@ -136,6 +136,9 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
+
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -999,7 +1002,7 @@ function applyAllFilters(){
       case"firstName":{const s=p.firstName.toLowerCase();if(f.op==="contains")return s.includes(v);if(f.op==="equals")return s===v;if(f.op==="starts with")return s.startsWith(v);if(f.op==="ends with")return s.endsWith(v);return true;}
       case"lastName":{const s=(p.lastName||"").toLowerCase();if(f.op==="contains")return s.includes(v);if(f.op==="equals")return s===v;if(f.op==="starts with")return s.startsWith(v);if(f.op==="ends with")return s.endsWith(v);return true;}
       case"hebrewName":{return(p.hebrewName||"").toLowerCase().includes(v);}
-      case"generation":{const g=p.generation;const n=+v;if(isNaN(n))return false;if(f.op==="=")return g===n;if(f.op==="<")return g<n;if(f.op==="<=")return g<=n;if(f.op===">")return g>n;if(f.op===">=")return g>=n;return false;}
+      case"generation":{const g=+p.generation;const n=+v;if(isNaN(n)||isNaN(g))return false;if(f.op==="=")return g===n;if(f.op==="<")return g<n;if(f.op==="<=")return g<=n;if(f.op===">")return g>n;if(f.op===">=")return g>=n;return false;}
       case"gender":return f.value===""||p.gender===f.value;
       case"blood":return f.value===""||String(p.blood)===(f.value==="true"?"true":"false");
       case"hasDOB":return f.value===""||Boolean(p.dob)===(f.value==="true");
@@ -1007,14 +1010,14 @@ function applyAllFilters(){
       case"ageMin":{const a=ageF(p.dob);return a!==null&&a>=(+v);}
       case"ageMax":{const a=ageF(p.dob);return a!==null&&a<=(+v);}
       case"upcomingDays":{if(!p.dob)return false;const d=new Date(p.dob);let nx=new Date(now.getFullYear(),d.getMonth(),d.getDate());if(nx<now)nx=new Date(now.getFullYear()+1,d.getMonth(),d.getDate());return(nx-now)/86400000<=(+v);}
-      case"family":return f.value===""||p.familyGroup===(+f.value);
+      case"family":return f.value===""||+p.familyGroup===(+f.value);
       case"hasMissing":{const miss=!p.firstName||!p.lastName||!p.hebrewName||(!p.dob&&!p.yartzheit)||(!p.yartzheit&&p.dob&&!p.hebMonth&&!p.hebDate);return Boolean(miss)===(f.value==="true");}
       case"missingHebName":return Boolean(!p.hebrewName)===(f.value==="true");
       case"missingDOB":return Boolean(!p.dob&&!p.yartzheit)===(f.value==="true");
       case"missingHebDOB":return Boolean(p.dob&&!p.hebMonth)===(f.value==="true");
       case"missingAnn":return Boolean(p.gender==="Male"&&p.spouseId&&!p.annDate)===(f.value==="true");
       case"isDupe":{const k=p.firstName+(p.nickName&&!/A\"H|Z\"L/i.test(p.nickName)?" ("+p.nickName+")":"")+(p.maidenName?" "+p.maidenName:"")+" "+p.lastName;const cnt=P.filter(x=>{const xk=x.firstName+(x.nickName&&!/A\"H|Z\"L/i.test(x.nickName)?" ("+x.nickName+")":"")+(x.maidenName?" "+x.maidenName:"")+" "+x.lastName;return xk===k;}).length;return f.value==="true"?cnt>1:cnt===1;}
-      case"hasSpouse":{var spEx=!!(p.spouseId&&P.find(function(x){return x.id===p.spouseId;}));return f.value===""||spEx===(f.value==="true");}
+      case"hasSpouse":{var spEx=!!(p.spouseId&&P.find(function(x){return +x.id===+p.spouseId;}));return f.value===""||spEx===(f.value==="true");}
       case"deceased":return f.value===""||Boolean(p.deceased||p.yartzheit)===(f.value==="true");
       default:return true;
     }
@@ -1076,6 +1079,7 @@ function loadPreset(name){
   else if(name==="dupes"){QF_FILTERS=[{field:"isDupe",op:"is",value:"true"}];QF_COLS=["engName","hebrewName","family","parentsName"];QF_SORT="name";QF_SORT_DIR=1;}
   else if(name==="nodob"){QF_FILTERS=[{field:"hasDOB",op:"is",value:"false"},{field:"deceased",op:"is",value:"false"}];QF_COLS=["engName","hebrewName","family","generation"];QF_SORT="name";QF_SORT_DIR=1;}
   else if(name==="noann"){QF_FILTERS=[{field:"missingAnn",op:"is",value:"true"}];QF_COLS=["engName","hebrewName","family","engDOB"];QF_SORT="name";QF_SORT_DIR=1;}
+  else if(name==="marriedgc"){QF_FILTERS=[{field:"generation",op:"=",value:"2"},{field:"hasSpouse",op:"is",value:"true"},{field:"blood",op:"is",value:"true"}];QF_COLS=["engName","hebrewName","family","annDate"];QF_SORT="code";QF_SORT_DIR=1;}
   else if(name==="bday30"){QF_FILTERS=[{field:"upcomingDays",op:"within (days)",value:"30"}];QF_COLS=["engName","hebrewName","engDOB","hebDOB","age","family"];QF_SORT="age";QF_SORT_DIR=1;}
   else if(name==="clear"){QF_FILTERS=[];}
   render();
@@ -1094,6 +1098,7 @@ function rptQuery(){
   var presets="<div style='display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;align-items:center'>"
     +"<strong style='color:#1a2744;font-size:12px'>Presets:</strong>"
     +"<button class='btn n sm' onclick='loadPreset(\"missing\")'>Missing Data</button>"
+    +"<button class='btn n sm' onclick='loadPreset(\"marriedgc\")' style='background:#2e7d32;color:white'>Married Grandchildren</button>"
     +"<button class='btn n sm' onclick='loadPreset(\"dupes\")'>Duplicate Names</button>"
     +"<button class='btn n sm' onclick='loadPreset(\"nodob\")'>No Birthday</button>"
     +"<button class='btn n sm' onclick='loadPreset(\"noann\")'>Missing Anniversary</button>"
@@ -1989,6 +1994,9 @@ function doLogout(){
     render();
   });
 })();
+
+
+
 
 
 
