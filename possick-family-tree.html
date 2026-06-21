@@ -1,0 +1,2015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Possick Family Tree</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--navy:#1a2744;--navy2:#243260;--blue:#2e4a8e;--gold:#c9a84c;--gold2:#e8c97a;--cream:#f8f5ee;--cream2:#f0ead8;--red:#c0392b;--green:#27ae60;--border:#c5b98a;}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Palatino Linotype',Palatino,'Book Antiqua',Georgia,serif;background:var(--cream);color:#222;font-size:13px;height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+.header{background:var(--navy);color:white;padding:8px 16px;display:flex;align-items:center;justify-content:space-between;border-bottom:2px solid var(--gold);flex-shrink:0;}
+.header h1{font-size:20px;font-weight:bold;font-family:'Frank Ruhl Libre','Palatino Linotype',Palatino,serif;letter-spacing:.3px;}.hsub{color:var(--gold2);font-size:11px;margin-top:1px;}
+.toast{background:var(--green);color:white;padding:3px 12px;border-radius:4px;font-size:11px;}.toast.err{background:var(--red);}
+.nav{background:var(--navy2);display:flex;padding:4px 8px 0;border-bottom:1px solid var(--border);flex-shrink:0;}
+.nb{padding:6px 16px;border:none;cursor:pointer;font-size:12px;font-family:inherit;border-radius:4px 4px 0 0;color:#aac;background:transparent;}
+.nb.active{background:var(--cream);color:var(--navy);font-weight:bold;}
+.main{flex:1;overflow-y:auto;padding:14px;}
+.panel{background:white;border:1px solid var(--border);border-radius:6px;box-shadow:0 2px 8px rgba(0,0,0,.07);overflow:hidden;margin-bottom:10px;}
+.ph{background:var(--navy);color:white;padding:8px 14px;font-size:13px;font-weight:bold;display:flex;align-items:center;position:sticky;top:0;z-index:40;justify-content:space-between;}
+.sbar{display:flex;gap:8px;margin-bottom:0;flex-wrap:wrap;position:sticky;top:0;background:var(--cream);z-index:20;padding:4px 0 8px;border-bottom:1px solid var(--border);}
+.sbar input,.sbar select{padding:6px 10px;border:1px solid var(--border);border-radius:4px;font-size:12px;font-family:inherit;background:white;}
+.sbar input{flex:1;min-width:160px;}
+table{width:100%;border-collapse:collapse;font-size:12px;}
+th{background:var(--navy);color:white;padding:7px 10px;text-align:left;font-weight:normal;white-space:nowrap;}
+td{padding:6px 10px;border-bottom:1px solid #eee;vertical-align:middle;}
+tbody tr:nth-child(even) td{background:#f7f4ec;}
+tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
+.heb{font-family:'Frank Ruhl Libre','Noto Serif Hebrew','David',serif;font-size:14px;direction:rtl;text-align:right;}
+.heb-i{font-family:'Frank Ruhl Libre','Noto Serif Hebrew','David',serif;font-size:13px;unicode-bidi:isolate;direction:rtl;}
+.mono{font-family:'Courier New',monospace;font-size:11px;color:#666;}
+.btn{padding:6px 14px;border:none;border-radius:4px;cursor:pointer;font-size:12px;font-family:inherit;font-weight:bold;}
+.btn.n{background:var(--navy);color:white;}.btn.n:hover{background:var(--blue);}
+.btn.s{background:var(--green);color:white;}.btn.s:hover{background:#229954;}
+.btn.d{background:var(--red);color:white;}.btn.d:hover{background:#a93226;}
+.btn.c{background:#888;color:white;}.btn.c:hover{background:#666;}
+.btn.o{background:#e67e22;color:white;}.btn.o:hover{background:#ca6f1e;}
+.btn.p{background:#8e44ad;color:white;}.btn.p:hover{background:#7d3c98;}
+.btn.teal{background:#16a085;color:white;}.btn.teal:hover{background:#1a8a72;}
+.btn.sm{padding:3px 10px;font-size:11px;}
+.fb{padding:14px;}.fs{margin-bottom:12px;border:1px solid var(--border);border-radius:5px;overflow:visible;}
+.fst{background:#e8e0cc;color:var(--navy);font-weight:bold;font-size:11px;padding:5px 10px;letter-spacing:.4px;text-transform:uppercase;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;}
+.fsb{padding:10px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px;}
+.ff{display:flex;flex-direction:column;gap:3px;}
+.ffl{font-size:10px;font-weight:bold;color:var(--navy);text-transform:uppercase;letter-spacing:.3px;}
+.ffi{padding:5px 8px;border:1px solid var(--border);border-radius:3px;font-size:12px;font-family:inherit;background:white;width:100%;}
+.ffi:focus{outline:2px solid var(--gold);}.ffi[dir=rtl]{font-family:'David','Miriam',Arial,sans-serif;font-size:15px;text-align:right;}
+.cbox{background:var(--navy);color:var(--gold2);font-family:'Courier New',monospace;font-size:15px;padding:6px 12px;border-radius:4px;font-weight:bold;letter-spacing:1px;min-height:30px;}
+.hbox{background:var(--cream);border:1px solid var(--border);border-radius:3px;padding:5px 8px;font-family:'Frank Ruhl Libre','Noto Serif Hebrew','David',serif;font-size:15px;direction:rtl;text-align:right;color:var(--navy);min-height:30px;}
+.hsub2{font-size:10px;color:#888;direction:ltr;text-align:left;margin-top:2px;}
+.chk{display:flex;align-items:center;gap:6px;font-size:12px;padding:4px 0;cursor:pointer;}
+.rg{display:flex;gap:6px;}.rb{padding:4px 14px;border:1px solid var(--border);border-radius:3px;cursor:pointer;font-size:12px;font-family:inherit;background:white;}.rb.sel{background:var(--navy);color:white;}
+.sw{position:relative;}
+.sdisp{border:1px solid var(--border);border-radius:3px;padding:5px 8px;background:white;cursor:pointer;display:flex;justify-content:space-between;font-size:12px;min-height:30px;align-items:center;}
+.sdrop{position:absolute;z-index:100;background:white;border:1px solid var(--border);border-radius:3px;box-shadow:0 4px 12px rgba(0,0,0,.15);top:100%;left:0;right:0;display:flex;flex-direction:column;}
+.ssrch{padding:6px 8px;border-bottom:1px solid #eee;font-size:12px;font-family:inherit;border:none;outline:none;width:100%;}
+.slist{overflow-y:auto;max-height:180px;}.sitem{padding:5px 10px;cursor:pointer;font-size:12px;}.sitem:hover{background:var(--cream2);}.sitem.cur{background:#e8e0cc;font-weight:bold;}.snone{color:#aaa;}
+.qb{background:linear-gradient(135deg,#1a2744,#2e4a8e);color:white;padding:10px 14px;border-radius:5px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.qbl{font-size:12px;line-height:1.5;}.qbl strong{color:var(--gold2);font-size:14px;}.clink{cursor:pointer;color:var(--blue);text-decoration:underline;}
+.rctl{background:#e8e0cc;border:1px solid var(--border);border-radius:6px;padding:10px 14px;margin-bottom:10px;display:flex;align-items:center;gap:14px;flex-wrap:wrap;position:sticky;top:42px;z-index:19;box-shadow:0 2px 4px rgba(0,0,0,.08);}
+.rctl label{font-size:12px;display:flex;align-items:center;gap:5px;cursor:pointer;white-space:nowrap;}
+.rctl select{padding:4px 8px;border:1px solid var(--border);border-radius:3px;font-size:12px;font-family:inherit;background:white;}
+.rtabs{display:flex;gap:4px;margin-bottom:8px;flex-wrap:wrap;position:sticky;top:0;background:var(--cream2);z-index:20;padding-top:4px;padding-bottom:4px;border-bottom:1px solid var(--border);}
+.rtab{padding:5px 12px;border:1px solid var(--border);border-radius:4px;cursor:pointer;font-size:12px;background:white;font-family:inherit;}.rtab.active{background:var(--navy);color:white;}
+.rb2{padding:16px;font-family:'Times New Roman',Times,serif;font-size:12px;line-height:1.45;}
+.rtit{text-align:center;font-size:18px;font-weight:bold;margin-bottom:12px;font-family:'Frank Ruhl Libre','Palatino Linotype',Palatino,serif;}
+.rfoot{display:none;}.rtit-rule{border-bottom:1.5px solid #555;margin:-6px 0 12px;}
+.rfam{font-weight:bold;font-size:15px;text-align:center;border-bottom:2px solid #333;padding-bottom:3px;margin:14px 0 5px;font-family:'Frank Ruhl Libre','Palatino Linotype',Palatino,serif;}.month-group{break-inside:avoid;page-break-inside:avoid;}
+.rmo-heb{font-family:'Frank Ruhl Libre','Noto Serif Hebrew','David',serif;font-size:22px;font-weight:bold;direction:rtl;text-align:center;border-bottom:2px solid #333;padding-bottom:4px;margin:14px 0 6px;}
+.ryartz-sep{text-align:center;color:#888;font-size:10px;margin:8px 0 4px;letter-spacing:2px;}
+.rline{display:flex;align-items:baseline;padding:0;min-height:1.3em;}
+.rlft{flex-shrink:0;white-space:nowrap;}.rdots{flex:1;border-bottom:1px dotted #999;margin:0 4px;min-width:10px;transform:translateY(-3px);}.rrgt{flex-shrink:0;text-align:right;white-space:nowrap;}
+.cg{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:420px;margin:16px auto;}
+.cc{background:var(--navy);color:white;border-radius:8px;padding:14px;text-align:center;}.cn{font-size:30px;font-weight:bold;color:var(--gold2);}.cl{font-size:11px;color:#aac;margin-top:2px;}
+@media(max-width:500px){.fsb{grid-template-columns:1fr;}}
+@media print{
+  body{height:auto!important;overflow:visible!important;font-family:'Times New Roman',Times,serif;font-size:11pt;background:white;}
+  body.compact-print .rb2{font-size:11pt!important;line-height:1.2!important;}
+  body.compact-print .rmo-heb{font-size:19px!important;}
+  .header,.nav,.sbar,.btn,.rtabs,.rctl,.ps-panel{display:none!important;}.ps-panel{position:sticky;top:0;z-index:30;background:var(--cream2);border-bottom:2px solid var(--gold);box-shadow:0 3px 8px rgba(0,0,0,.18);}
+  .main{padding:0;overflow:visible!important;height:auto!important;}
+  .panel{border:none!important;box-shadow:none!important;overflow:visible!important;}
+  .rfoot{display:block;text-align:right;font-size:9pt;color:#888;padding-top:4px;margin-top:6px;border-top:1px solid #bbb;}.rb2{padding:0;font-size:12pt;line-height:1.35;}.rtit{font-size:16pt;font-weight:bold;}.rfam{font-size:14pt;}
+  .rfam,.rmo-heb{page-break-inside:avoid;}
+  .rpt-page-break{page-break-before:always;margin-top:0;}
+  .rline{page-break-inside:avoid;}
+  @page{margin-top:0.40in;margin-right:0.50in;margin-bottom:0.30in;margin-left:0.50in;size:letter portrait;}
+}
+</style>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<div class="header">
+  <div><h1>Possick Family Tree</h1><div class="hsub" id="hdr"></div></div>
+  <div style="display:flex;align-items:center;gap:8px;"><span id="sync-status" style="font-size:11px;color:#e8c97a;font-family:inherit;"></span><div id="toast"></div></div>
+</div>
+<div class="nav">
+  <button class="nb" id="nb-list" onclick="gv('list')">People</button>
+  <button class="nb" id="nb-add" onclick="gv('add')">+ Add Person</button>
+  <button class="nb" id="nb-reports" onclick="gv('reports')">Reports</button>
+  <button class="nb" id="nb-announce" onclick="showAnnounce()" style="background:#2e7d32">&#128226; Announce</button>
+  <button class="nb" id="nb-notify" onclick="showNotify()" style="background:#1565c0">&#128197; Notify</button>
+</div>
+<div class="main" id="main"><div style="text-align:center;padding:60px 20px;color:#888;font-family:serif"><div style="font-size:18px;color:#1a2744;margin-bottom:8px">Possick Family Tree</div><div style="font-size:13px">Connecting to Firebase…</div><div style="font-size:11px;margin-top:8px;color:#aaa">This may take a few seconds on first load</div></div></div>
+<script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Month order: Nisan=1...Adar=12 (covers Adar I & II)
+const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
+const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
+const FAM=[
+  {n:0,full:"Abba & Mummy"},
+  {n:1,full:'Yehoshua & Sarah Rivkah A"H & Family'},
+  {n:2,full:'Zeev Z"L & Brachie & Family'},
+  {n:3,full:"Yudi & Rochel & Family"},
+  {n:4,full:"Tzvi & Yehudis & Family"},
+  {n:5,full:"Yosy & Chani & Family"},
+  {n:6,full:"Aron & Miriam & Family"},
+  {n:7,full:"Aaron Dovid & Mindy & Family"},
+  {n:8,full:"Nachmi & Nechama & Family"},
+  {n:9,full:"Yartzheit"}
+];
+const GN=["Parents","Children","Grandchildren","Great-Grandchildren","Gt-Gt-Grandchildren"];
+const MKT=["&#9675;","&#9632;","&#9679;","&#9702;","&#9671;"];
+const MKS=["\u25cb","\u25a0","\u25cf","\u25e6","\u25c7"];
+const CARS=["","Verizon Wireless","AT&T","T-Mobile","Sprint","Other"];
+function isHonorific(s){return /^[AZ]["'\u201c\u201d]?[HL]$/.test((s||"").trim());}
+/*SEED_START*/const SEED=[];/*SEED_END*/
+const INIT_NID=440;
+
+// ═══ FIREBASE CLOUD SYNC ═══
+const FB_CFG={apiKey:"AIzaSyBeP4pFv254xfsaL3qouwyrZVFeWW0QbF0",authDomain:"possick-family-tree.firebaseapp.com",projectId:"possick-family-tree",storageBucket:"possick-family-tree.firebasestorage.app",messagingSenderId:"483019576467",appId:"1:483019576467:web:b70e020b250cac5ad0a966"};
+const FAMILY_ID="possick";
+let db=null,saveTimer=null,pendingSave=false,cloudUnsub=null;
+
+function setSyncStatus(s){
+  var el=document.getElementById("hdr");
+  if(!el)return;
+  var base=P.filter(p=>p.generation>=1).filter(p=>p.blood).length;
+  var syncLabel="";
+  if(s==="loading")syncLabel=" · <span style='color:#ffd'>loading…</span>";
+  else if(s==="offline")syncLabel=" · <span style='color:#f88'>offline</span>";
+  else if(s==="cached")syncLabel=" · <span style='color:#f8c'>using cached data — changes may overwrite others!</span>";
+  else if(s==="synced"&&LAST_SYNC){
+    var t=new Date(LAST_SYNC);
+    var h=t.getHours()%12||12,m=('0'+t.getMinutes()).slice(-2),ap=t.getHours()<12?'am':'pm';
+    syncLabel=" · <span style='color:#8f8'>synced "+h+":"+m+ap+"</span>";
+  } else if(s==="synced")syncLabel=" · <span style='color:#8f8'>synced</span>";
+  el.innerHTML=P.length+" · "+base+" blood"+syncLabel;
+}
+
+function initFirebase(){
+  try{
+    if(!window.firebase)return false;
+    if(!firebase.apps.length)firebase.initializeApp(FB_CFG);
+    db=firebase.firestore();
+    // Persistence disabled — prevents stale cache overwriting live data
+    return true;
+  }catch(e){console.error("FB init:",e);return false;}
+}
+
+async function saveToCloud(){
+  if(!db){
+    LOCAL_DIRTY=true;LOCAL_TS=new Date().toISOString();SYNC_STATE="offline";
+    try{localStorage.setItem("possick-bk",JSON.stringify({people:P,nextId:NID,savedAt:LOCAL_TS}));}catch(e){}
+    setSyncStatus("offline");
+    toast("Saved locally — not yet synced to server",false);
+    return;
+  }
+  try{
+    setSyncStatus("saving");
+    LAST_SYNC=new Date().toISOString();
+    await db.collection("families").doc(FAMILY_ID).set({people:P,nextId:NID,updatedAt:LAST_SYNC});
+    pendingSave=false;LOCAL_DIRTY=false;SERVER_TS=LAST_SYNC;SYNC_STATE="online";setSyncStatus("synced");
+  }catch(e){LOCAL_DIRTY=true;LOCAL_TS=LAST_SYNC;SYNC_STATE="offline";setSyncStatus("error");console.error("Save:",e);}
+}
+
+function scheduleSave(){
+  LOCAL_DIRTY=true;LOCAL_TS=new Date().toISOString();
+  pendingSave=true;clearTimeout(saveTimer);
+  saveTimer=setTimeout(saveToCloud,1500);
+}
+
+async function loadFromCloud(){
+  if(!db)return false;
+  try{
+    setSyncStatus("loading");
+    // Always fetch from server — never serve stale cached data
+    const snap=await db.collection("families").doc(FAMILY_ID).get({source:"server"});
+    if(snap.exists){
+      var d=snap.data();
+      P=d.people||[];NID=d.nextId||INIT_NID;
+      LAST_SYNC=d.updatedAt||"";
+      setSyncStatus("synced");
+      return true;
+    }
+    return false;
+  }catch(e){
+    // Server unavailable — try cache as fallback
+    try{
+      const snap2=await db.collection("families").doc(FAMILY_ID).get();
+      if(snap2.exists){
+        P=snap2.data().people||[];NID=snap2.data().nextId||INIT_NID;
+        setSyncStatus("cached");
+        return true;
+      }
+    }catch(e2){}
+    setSyncStatus("offline");return false;
+  }
+}
+
+async function migrateFromLocalStorage(){
+  const keys=["possick-v8","possick-v7","possick-v6","possick-v5","possick-bk"];
+  for(let i=0;i<keys.length;i++){
+    const raw=localStorage.getItem(keys[i]);
+    if(!raw)continue;
+    try{
+      const d=JSON.parse(raw);
+      if(d.people&&d.people.length>0){
+        const ok=confirm("Found "+d.people.length+" records stored locally.\n\nMove them to the cloud now?");
+        if(ok){
+          P=d.people;NID=d.nextId||INIT_NID;
+          await saveToCloud();
+          keys.forEach(function(k){localStorage.removeItem(k);});
+          toast("Migrated "+P.length+" records to cloud!",false);
+        }
+        return true;
+      }
+    }catch(e){}
+  }
+  return false;
+}
+
+function startRealtimeSync(){
+  if(!db)return;
+  if(cloudUnsub)cloudUnsub();
+  cloudUnsub=db.collection("families").doc(FAMILY_ID).onSnapshot(
+    function(snap){
+      if(!snap.exists||snap.metadata.hasPendingWrites||pendingSave)return;
+      var d=snap.data();
+      if(!d||!d.people)return;
+      var serverUpdatedAt=d.updatedAt||"";
+      // Conflict: server changed since we went offline AND we made local edits
+      if(LOCAL_DIRTY&&SERVER_TS&&serverUpdatedAt&&serverUpdatedAt!==SERVER_TS){
+        SYNC_STATE="conflict";
+        showConflictDialog(serverUpdatedAt,LOCAL_TS,d);
+        return;
+      }
+      // No conflict — accept server data
+      if(!LOCAL_DIRTY){
+        P=d.people;NID=d.nextId||NID;
+        LAST_SYNC=serverUpdatedAt;SERVER_TS=serverUpdatedAt;
+        render();setSyncStatus("synced");
+      }
+    },
+    function(){SYNC_STATE="offline";setSyncStatus("offline");}
+  );
+}
+
+function importJSON(){
+  var inp=document.createElement("input");inp.type="file";inp.accept=".json";
+  inp.onchange=async function(e){
+    var f=e.target.files[0];if(!f)return;
+    var txt=await f.text();
+    try{
+      var d=JSON.parse(txt);
+      if(!d.people||!d.people.length){alert("No people found.");return;}
+      if(!confirm("Import "+d.people.length+" records?\n\nThis replaces cloud data."))return;
+      P=d.people;NID=d.nextId||INIT_NID;
+      await saveToCloud();render();
+      toast("Imported "+P.length+" records to cloud!",false);
+    }catch(er){alert("Error: "+er.message);}
+  };
+  inp.click();
+}
+
+
+// Helpers
+const gG=c=>c?c.split(".").slice(0,4).filter(s=>s!=="00"&&s!=="Y").length:0;
+const gFam=c=>{if(!c)return 0;try{return parseInt(c.split(".")[0]);}catch(e){return 0;}};
+const mkt=g=>MKT[Math.min(g||0,4)];
+const mks=g=>MKS[Math.min(g||0,4)];
+const ord=n=>{const s=["th","st","nd","rd"],v=n%100;return n+(s[(v-20)%10]||s[v]||s[0]);};
+const MN=["January","February","March","April","May","June","July","August","September","October","November","December"];
+const fdShort=s=>{if(!s)return"";const p=s.split("-");return MN[+p[1]-1]+" "+(+p[2]);};
+const fdLong=s=>{if(!s)return"";const p=s.split("-");return MN[+p[1]-1]+" "+(+p[2])+", "+p[0];};
+const fdSlash=s=>{if(!s)return"";const p=s.split("-");return(+p[1])+"/"+(+p[2])+"/"+p[0];};
+const yr=s=>s?s.split("-")[0]:"";
+const ageF=dob=>{if(!dob)return null;const b=new Date(dob),t=new Date();let a=t.getFullYear()-b.getFullYear();if(t.getMonth()<b.getMonth()||(t.getMonth()===b.getMonth()&&t.getDate()<b.getDate()))a--;return a;};
+const esc=s=>String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+const today=()=>new Date().toLocaleDateString("en-US",{year:"numeric",month:"long",day:"numeric"});
+function cleanHeb(str){if(!str)return str;let s=str.replace(/[\u0591-\u05C7]/g,"");const parts=s.trim().split(/\s+/).filter(Boolean);let day=parts[0]||"",month=parts[1]||"";if(month.charCodeAt(0)===0x05D1&&month.length>1)month=month.slice(1);return month?day+" "+month:day;}
+const fH=async(ds,sun)=>{if(!ds)return null;try{const p=ds.split("-");const r=await fetch("https://www.hebcal.com/converter?cfg=json&gy="+p[0]+"&gm="+p[1]+"&gd="+p[2]+"&g2h=1"+(sun?"&gs=on":""));const j=await r.json();return{hebrew:cleanHeb(j.hebrew),hm:j.hm,hd:j.hd,hy:j.hy,monthNum:MO[j.hm]||0,displayText:ord(j.hd)+" of "+j.hm};}catch(e){return null;}};
+const nc=(pc,gender,ppl)=>{if(!pc)return"";const ps=pc.split(".").slice(0,4);const pl=ps.filter(s=>s!=="00").length;if(pl>=4)return"";const pref=ps.slice(0,pl);const sibs=ppl.filter(p=>{if(!p.blood)return false;const s=p.code.split(".").slice(0,4);for(let i=0;i<pl;i++)if(s[i]!==pref[i])return false;return s[pl]!=="00";});const mx=sibs.reduce((m,p)=>Math.max(m,parseInt(p.code.split(".").slice(0,4)[pl])||0),0);const ns=[...ps];ns[pl]=String(mx+1).padStart(2,"0");return ns.join(".")+"."+(gender==="Female"?"g":"b");};
+
+// Get month sort number from stored month name (Nisan-first mapping)
+function moSort(monthName){return MO[monthName]||99;}
+
+// Name helpers
+function nickPart(nick,italic){
+  if(!nick)return"";
+  if(isHonorific(nick))return" "+nick;
+  return italic?" <em>("+esc(nick)+")</em>":" ("+esc(nick)+")";
+}
+// Full name for Tehillim (no maiden)
+function rptNameT(p){return esc(p.firstName)+nickPart(p.nickName,true)+" "+esc(p.lastName);}
+// First name only (for individual birthday entries)
+function rptNick(p){
+  // homeTitle: how children address this person (Tatty, Mommy etc)
+  // Only applies when viewing that person's OWN family report
+  if(p.homeTitle&&p.homeTitle.trim()&&RPT_FAM>=0&&p.familyGroup===RPT_FAM)
+    return esc(p.homeTitle.trim());
+  // usedName / parentsName (single name) = casual name
+  var used=p.usedName&&!isHonorific(p.usedName)?p.usedName.trim():null;
+  if(!used&&p.parentsName&&p.parentsName.indexOf("&")<0&&p.parentsName.trim())
+    used=p.parentsName.trim();
+  var nick=p.nickName&&!isHonorific(p.nickName)?p.nickName:null;
+  if(RPT_NAME_MODE==="formal")return esc(p.firstName);
+  if(RPT_NAME_MODE==="nick")return esc(used||nick||p.firstName);
+  return esc(p.firstName)+(nick?nickPart(nick,true):"");
+}
+function rptFirst(p){return rptNick(p);}
+// Anniversary name: Husband & Wife (maiden) Lastname
+function annName(p){
+  // Anniversaries always show full Both format regardless of Names setting
+  const sp=P.find(s=>s.id===p.spouseId);
+  function annFirst(q){
+    return esc(q.firstName)+nickPart(q.nickName,true);
+  }
+  if(!sp)return annFirst(p)+" "+esc(p.lastName);
+  const maiden=sp.maidenName?" ("+esc(sp.maidenName)+")":"";
+  return annFirst(p)+" &amp; "+annFirst(sp)+maiden+" "+esc(p.lastName);
+}
+// Used name for disambiguation
+function usedName(p){
+  const dad=P.find(x=>x.id===p.fatherId);
+  let mom=P.find(x=>x.id===p.motherId);
+  // If mom not found via motherId, try the father's spouse
+  if(dad&&!mom&&dad.spouseId)mom=P.find(x=>x.id===dad.spouseId);
+  // Single-family view: use homeTitle if set (how children address parents)
+  if(dad&&RPT_FAM>=0&&dad.familyGroup===RPT_FAM){
+    var dT=dad.homeTitle?dad.homeTitle.trim():null;
+    var mT=mom&&mom.homeTitle?mom.homeTitle.trim():null;
+    if(dT&&mT)return dT+" & "+mT;
+    if(dT)return dT;
+  }
+  // Use nickname when it's a real nickname (not A"H, Z"L honorifics)
+  function sn(person){
+    if(!person)return null;
+    const n=person.nickName;
+    if(n&&!/A"H|Z"L|a"h|z"l/i.test(n))return n;
+    return person.firstName;
+  }
+  const fn=sn(dad), mn=sn(mom);
+  if(fn&&mn)return fn+" & "+mn;
+  if(fn)return fn;
+  if(mn)return mn;
+  // Last resort: child's own parentsName field if manually set
+  if(p.parentsName){const pn=p.parentsName.replace(/\s*&\s*[Ff]amily.*/,"").trim();if(pn)return pn;}
+  return"";
+}
+function dispName(p,bold){
+  const fn=bold?"<strong>"+esc(p.firstName)+"</strong>":esc(p.firstName);
+  const ln=bold?"<strong>"+esc(p.lastName)+"</strong>":esc(p.lastName);
+  const mi=p.blood?"":" <span style='color:#aaa;font-size:10px'>(m)</span>";
+  return fn+nickPart(p.nickName,true)+(p.maidenName?" ("+esc(p.maidenName)+") ":"")+" "+ln+mi;
+}
+
+let P=[],NID=INIT_NID,VIEW="list",RTAB="tehillim",FORM={},EDITID=null;
+let SRCH="",FFAM=-1,SOPEN=null,SQ={},HT=null,AT=null,YT=null,FP=null,ADDSPOUSEFOR=null;
+let RPT_FAM=-1,RPT_YEAR=true,RPT_AGES=true;
+
+const SK="possick-v8";
+function loadLS(){return null;}
+function saveLS(){scheduleSave();}
+function toast(msg,err){const el=document.getElementById("toast");el.className="toast"+(err?" err":"");el.textContent=(err?"! ":"\u2713 ")+msg;setTimeout(()=>el.textContent="",2500);}
+function blank(){return{id:null,code:"",firstName:"",lastName:"",hebrewName:"",nickName:"",maidenName:"",parentsName:"",gender:"Male",dob:"",hebDate:"",hebDateText:"",hebMonth:"",hebMonthNum:0,hebDay:0,hebYear:0,sunset:false,sunsetYartz:false,sunsetAnn:false,yartzheit:false,yartzdob:"",yartzHebDate:"",annDate:"",annHeb:"",annHebText:"",annMonth:"",annMonthNum:0,annDay:0,fatherId:null,motherId:null,familyGroup:0,generation:0,blood:true,deceased:false,spouseId:null,email:"",phone:"",carrier:"",notes:""};}
+
+function exportJSON(){const blob=new Blob([JSON.stringify({people:P,nextId:NID},null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="possick-"+new Date().toISOString().split("T")[0]+".json";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast("Exported JSON",false);}
+function exportCSV(){
+  const cols=["id","code","firstName","lastName","nickName","maidenName","parentsName","hebrewName","gender","dob","hebDate","annDate","annHeb","yartzheit","yartzdob","yartzHebDate","familyGroup","generation","blood","deceased","spouseId","fatherId","motherId","email","phone","carrier","notes"];
+  const rows=[cols.join(",")];
+  P.forEach(p=>{rows.push(cols.map(c=>{const v=p[c]===null||p[c]===undefined?"":String(p[c]);return v.includes(",")||v.includes('"')||v.includes("\n")?'"'+v.replace(/"/g,'""')+'"':v;}).join(","));});
+  // BOM + UTF-8 so Excel shows Hebrew correctly
+  const blob=new Blob(["\ufeff"+rows.join("\n")],{type:"text/csv;charset=utf-8;"});
+  const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="possick-"+new Date().toISOString().split("T")[0]+".csv";document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);toast("Exported CSV",false);
+}
+
+function render(){
+  ["list","add","reports"].forEach(v=>{const b=document.getElementById("nb-"+v);if(b)b.className="nb"+(VIEW===v||(VIEW==="edit"&&v==="add")?" active":"");});
+  const desc=P.filter(p=>p.generation>=1);
+  document.getElementById("hdr").textContent=P.length+"\u00b7 "+desc.filter(p=>p.blood).length+" blood";
+  const m=document.getElementById("main");
+  if(VIEW==="list"){
+    const prevFocus=document.activeElement&&document.activeElement.id==="list-search";
+    const prevCursor=prevFocus?document.activeElement.selectionStart:-1;
+    m.innerHTML=buildListHTML();
+    if(prevFocus||SRCH){const inp=document.getElementById("list-search");if(inp){inp.focus();if(prevCursor>=0)inp.setSelectionRange(prevCursor,prevCursor);}}
+  } else if(VIEW==="add"||VIEW==="edit"){
+    m.innerHTML=renderForm();
+    if(VIEW==="edit"&&FORM&&FORM.id!=null)setTimeout(function(){renderPhotoStrip(FORM.id);},100);
+    if(VIEW==="edit"&&FORM&&FORM.id!=null)setTimeout(function(){
+      var ph=m.querySelector('.ph div');if(!ph)return;
+      var prev=document.createElement('button');prev.className='btn n sm';prev.title='Prev';prev.innerHTML='&#9664; Prev';
+      prev.onclick=function(){navP(-1);};
+      var nxt=document.createElement('button');nxt.className='btn n sm';nxt.title='Next';nxt.innerHTML='Next &#9654;';
+      nxt.onclick=function(){navP(1);};
+      ph.appendChild(prev);ph.appendChild(nxt);
+    },0);
+    if(VIEW==="edit"&&FORM&&FORM.id!=null)setTimeout(function(){renderPhotoStrip(FORM.id);},50);
+  }
+  else{
+    try{m.innerHTML=renderReports();}
+    catch(err){
+      console.error('renderReports error:',err);
+      m.innerHTML="<div style='color:#c00;padding:20px;font-size:14px'><strong>Report Error:</strong> "+err.message+"<br><small>Check browser console (F12) for details.</small></div>";
+    }
+  }
+}
+
+function buildListHTML(){
+  const fo=FAM.map(f=>"<option value='"+f.n+"'"+(FFAM===f.n?" selected":"")+">"+esc(f.full)+"</option>").join("");
+  const sbar="<div class='sbar'><input id='list-search' type='text' placeholder='Search name, Hebrew, code...' value='"+esc(SRCH)+"' oninput='SRCH=this.value;render()'><select onchange='FFAM=+this.value;render()'><option value='-1'"+(FFAM<0?" selected":"")+">All Families</option>"+fo+"</select><button class='btn n' onclick=\"gv('add')\">+ Add</button><button class='btn teal sm' onclick='exportJSON()'>Export JSON</button><button class='btn teal sm' onclick='exportCSV()'>Export CSV</button></div>";
+  if(!P.length){return sbar+"<div style='background:linear-gradient(135deg,#1a2744,#2e4a8e);color:white;padding:24px;border-radius:8px;text-align:center;margin:20px auto;max-width:540px'><div style='font-size:20px;font-weight:bold;color:#e8c97a;margin-bottom:10px'>Welcome</div><div style='font-size:13px;color:#cce;line-height:1.8'>Click <strong>+ Add Person</strong> to begin.<br>Root couple codes: <code style='background:#ffffff22;padding:2px 6px;border-radius:3px'>00.00.00.00.b</code> Father, <code style='background:#ffffff22;padding:2px 6px;border-radius:3px'>00.00.00.00.g</code> Mother</div><br><button class='btn s' onclick=\"gv('add')\">+ Add First Person</button></div>";}
+  const fp=P.filter(p=>{const q=SRCH.toLowerCase();if(q&&!(p.firstName+" "+p.lastName+" "+(p.hebrewName||"")+" "+p.code).toLowerCase().includes(q))return false;if(FFAM>=0&&p.familyGroup!==FFAM)return false;return true;}).sort((a,b)=>a.code.localeCompare(b.code));
+  const rows=fp.map(p=>{const a=ageF(p.dob);const dob=p.dob?fdSlash(p.dob)+" <span style='color:#aaa'>["+(a!==null?a:"?")+"]</span>":p.yartzheit&&p.yartzHebDate?"<span class='heb-i' style='font-size:12px'>"+esc(p.yartzHebDate)+"</span>":"&mdash;";const famShort=(FAM[p.familyGroup]||{full:""}).full.replace(/\s*&\s*[Ff]amily.*/,"").trim();return "<tr onclick='editP("+p.id+")'><td style='text-align:center;font-size:15px'>"+mkt(p.generation)+"</td><td class='mono'>"+esc(p.code)+"</td><td>"+dispName(p,true)+"</td><td class='heb' style='max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'>"+esc(p.hebrewName||"")+"</td><td style='font-size:11px;color:#666'>"+famShort+"</td><td style='font-size:11px;color:#666;white-space:nowrap'>"+dob+"</td><td style='white-space:nowrap'><button class='btn n sm' onclick='event.stopPropagation();editP("+p.id+")'>Edit</button> <button class='btn o sm' onclick='event.stopPropagation();addChild("+p.id+")'>+Child</button></td></tr>";}).join("");
+  return sbar+"<div class='panel'><div class='ph'><span>Family Members</span><span style='font-weight:normal;font-size:11px'>"+fp.length+" of "+P.length+" shown</span></div><div style='overflow-x:auto'><table><thead><tr><th>Mk</th><th>Code</th><th>Name</th><th>Hebrew Name</th><th>Family</th><th>DOB/Age</th><th></th></tr></thead><tbody>"+(rows||"<tr><td colspan='7' style='text-align:center;padding:30px;color:#999'>No results</td></tr>")+"</tbody></table></div></div><div style='margin-top:6px;color:#999;font-size:10px'>&#9675; Parents &#9632; Children &#9679; Grandchildren &#9702; Great-Grandch. &#9671; Gt-Gt&nbsp;&nbsp;(m)=married in</div>";
+}
+
+function selHtml(sid,label,val){
+  const sel=P.find(p=>p.id===val);
+  const isOpen=SOPEN===sid;
+  const q=(SQ[sid]||"").toLowerCase();
+  const opts=P.filter(p=>p.id!==FORM.id&&(!q||(p.firstName+" "+p.lastName+" "+p.code).toLowerCase().includes(q))).slice(0,30);
+  const selTxt=sel?esc(sel.firstName+" "+sel.lastName):"&mdash; Select &mdash;";
+  const selStyle=sel?"":"style='color:#aaa'";
+  let drop="";
+  if(isOpen){
+    const items=opts.map(p=>"<div class='sitem"+(p.id===val?" cur":"")+"' onclick=\"setParent('"+sid+"',"+p.id+")\"><strong>"+esc(p.firstName)+" "+esc(p.lastName)+"</strong> <span style='color:#999;font-size:10px'>"+esc(p.code)+"</span></div>").join("");
+    drop="<div class='sdrop'><input class='ssrch' id='sq-"+sid+"' placeholder='Search...' value='"+esc(SQ[sid]||"")+"' oninput=\"SQ['"+sid+"']=this.value;refreshSel('"+sid+"')\" autocomplete='off'><div class='slist' id='sl-"+sid+"'><div class='sitem snone' onclick=\"setParent('"+sid+"',null)\">&mdash; None &mdash;</div>"+items+(opts.length?"":"<div class='sitem snone'>No results</div>")+"</div></div>";
+  }
+  return "<div class='ff'><label class='ffl'>"+label+"</label><div class='sw' id='sw-"+sid+"'><div class='sdisp' onclick=\"toggleSel('"+sid+"')\"><span "+selStyle+">"+selTxt+"</span><span style='color:#aaa;font-size:10px'>&#9660;</span></div>"+drop+"</div></div>";
+}
+function refreshSel(sid){
+  const q=(SQ[sid]||"").toLowerCase();const val=sid==="father"?FORM.fatherId:FORM.motherId;
+  const opts=P.filter(p=>p.id!==FORM.id&&(!q||(p.firstName+" "+p.lastName+" "+p.code).toLowerCase().includes(q))).slice(0,30);
+  const el=document.getElementById("sl-"+sid);if(!el)return;
+  el.innerHTML="<div class='sitem snone' onclick=\"setParent('"+sid+"',null)\">&mdash; None &mdash;</div>"+opts.map(p=>"<div class='sitem"+(p.id===val?" cur":"")+"' onclick=\"setParent('"+sid+"',"+p.id+")\"><strong>"+esc(p.firstName)+" "+esc(p.lastName)+"</strong> <span style='color:#999;font-size:10px'>"+esc(p.code)+"</span></div>").join("")+(opts.length?"":"<div class='sitem snone'>No results</div>");
+}
+
+function childrenPanel(pid){
+  const person=P.find(p=>p.id===pid);if(!person)return"";
+  const kids=P.filter(p=>p.fatherId===pid||p.motherId===pid).sort((a,b)=>a.code.localeCompare(b.code));
+  const rows=kids.map(k=>{const a=ageF(k.dob);const dob=k.dob?fdSlash(k.dob)+" <span style='color:#999'>["+(a!==null?a:"?")+"]</span>":k.yartzheit&&k.yartzHebDate?"<span class='heb-i'>"+esc(k.yartzHebDate)+"</span>":"&mdash;";return"<tr><td style='text-align:center;font-size:14px'>"+mkt(k.generation)+"</td><td><span class='clink' onclick='editP("+k.id+")'>"+dispName(k,true)+"</span></td><td class='mono' style='font-size:10px'>"+esc(k.code)+"</td><td style='font-size:11px'>"+dob+"</td><td style='white-space:nowrap'><button class='btn n sm' onclick='editP("+k.id+")'>Open</button> <button class='btn o sm' onclick='addChild("+k.id+")'>+Child</button></td></tr>";}).join("");
+  const noSpouse=!person.spouseId||!P.find(p=>p.id===person.spouseId);
+  return "<div class='fs'><div class='fst'><span>Children of "+esc(person.firstName+" "+person.lastName)+" ("+kids.length+")</span><div style='display:flex;gap:6px;flex-wrap:wrap'>"+(noSpouse?"<button class='btn p sm' onclick='addSpouseFor("+pid+")'>+ Spouse</button>":"")+"<button class='btn s sm' onclick='addChild("+pid+")'>+ Add Child</button></div></div><div style='overflow-x:auto'><table style='font-size:12px'><thead><tr><th>Mk</th><th>Name</th><th>Code</th><th>DOB/Age</th><th></th></tr></thead><tbody>"+(rows||"<tr><td colspan='5' style='text-align:center;padding:16px;color:#999'>No children yet</td></tr>")+"</tbody></table></div></div>";
+}
+
+function renderForm(){
+  const f=FORM,isEdit=VIEW==="edit";
+  const carrO=CARS.map(c=>"<option value='"+esc(c)+"'"+(f.carrier===c?" selected":"")+">"+esc(c||"&mdash; Select &mdash;")+"</option>").join("");
+  const banner=FP?"<div class='qb'><div class='qbl'><strong>"+esc(FP)+"</strong><br><span style='font-size:11px;color:#cce'>Parents, code, family & generation pre-filled.</span></div><button class='btn c sm' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button><button onclick='navP(-1)' style='margin-left:6px' title='Prev person'>&#9664; Prev</button><button onclick='navP(1)' title='Next person'>Next &#9654;</button></div>":"";
+  const sp=isEdit&&f.spouseId?P.find(p=>p.id===f.spouseId):null;
+  const spBox=sp?"<div class='ff'><label class='ffl'>Spouse</label><div style='padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:11px'>"+esc(sp.firstName+" "+sp.lastName)+"</div></div>":isEdit?"<div class='ff'><label class='ffl'>Spouse</label><button class='btn p sm' style='margin-top:2px' onclick='addSpouseFor("+f.id+")'>+ Add Spouse</button><div style='font-size:10px;color:#888;margin-top:3px'>No spouse on record</div></div>":"";
+  const yartzFields=f.yartzheit?"<input class='ffi' type='date' style='margin-top:4px' value='"+( f.yartzdob||"")+"' onchange='updYartz(this.value)'><label class='chk' style='margin-top:4px'><input type='checkbox' "+(f.sunsetYartz?"checked":"")+" onchange='FORM.sunsetYartz=this.checked;if(FORM.yartzdob)updYartz(FORM.yartzdob)'> After sunset</label><div class='hbox' id='ydb' style='margin-top:4px;font-size:13px'>"+(f.yartzHebDate||"<span style='color:#bbb;font-size:10px'>Enter date to auto-fetch</span>")+"</div>":"";
+  return banner+"<div class='panel'><div class='ph'><span>"+(isEdit?"Edit Person":"Add New Person")+"</span><div style='display:flex;gap:6px'><button class='btn s sm' onclick='doSave()'>Save</button>"+(isEdit?"<button class='btn teal sm' onclick='uploadPhoto("+f.id+")' title='Add or view photos'>📸 Photos</button>":"")+""+(isEdit?"<button class='btn d sm' onclick='doDelete()'>Delete</button>":"")+"<button class='btn c sm' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button></div></div><div class='fb'>"
+  +"<div class='fs'><div class='fst'>Position &amp; Classification</div><div class='fsb' style='align-items:end'>"
+  +"<div class='ff'><label class='ffl'>Position Code</label><div class='cbox'>"+(f.code||"&mdash; auto-generates &mdash;")+"</div></div>"
+  +"<div class='ff'><label class='ffl'>Generation</label><div style='padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:13px'>"+mkt(f.generation)+" "+(GN[f.generation]||"&mdash;")+"</div></div>"
+  +"<div class='ff'><label class='ffl'>Family</label><div style='padding:5px 8px;border:1px solid var(--border);border-radius:3px;background:var(--cream);font-size:11px'>"+((FAM[f.familyGroup]||{full:"&mdash;"}).full)+"</div></div>"
+  +"<div class='ff'><label class='ffl'>Gender</label><div class='rg'><div class='rb"+(f.gender==="Male"?" sel":"")+"' onclick=\"setGend('Male')\">Male</div><div class='rb"+(f.gender==="Female"?" sel":"")+"' onclick=\"setGend('Female')\">Female</div></div></div>"
+  +spBox+"</div></div>"
+  +"<div class='fs'><div class='fst'>Parents &mdash; selecting parents auto-generates code</div><div class='fsb'>"+selHtml("father","Father",f.fatherId)+selHtml("mother","Mother",f.motherId)+"</div></div>"
+  +"<div class='fs'><div class='fst'>Names</div><div class='fsb'>"
+  +"<div class='ff'><label class='ffl'>First Name *</label><input class='ffi' value='"+esc(f.firstName)+"' oninput='FORM.firstName=this.value' placeholder='First name'></div>"
+  +"<div class='ff'><label class='ffl'>Nickname <span style='font-weight:normal;color:#888;font-size:10px;text-transform:none;letter-spacing:0'>(e.g., Dovi, Esty &mdash; not A&quot;H/Z&quot;L)</span></label><input class='ffi' value='"+esc(f.nickName||"")+"' oninput='FORM.nickName=this.value' placeholder='e.g., Yudi, Dovi'></div>"
+  +"<div class='ff'><label class='ffl'>Last Name *</label><input class='ffi' value='"+esc(f.lastName)+"' oninput='FORM.lastName=this.value' placeholder='Last name'></div>"
+  +"<div class='ff'><label class='ffl'>Maiden Name</label><input class='ffi' value='"+esc(f.maidenName||"")+"' oninput='FORM.maidenName=this.value' placeholder='Maiden name'></div>"
+  +"<div class='ff' style='grid-column:1/-1'><label class='ffl'>Hebrew Name <span style='font-weight:normal;color:#888;font-size:10px;text-transform:none;letter-spacing:0'>(Win: Alt+Shift &middot; Mac: Cmd+Space)</span></label><input dir='rtl' lang='he' class='ffi' value='"+esc(f.hebrewName||"")+"' oninput='FORM.hebrewName=this.value' placeholder='\u05E9\u05DD \u05E2\u05D1\u05E8\u05D9'></div>"
+  +"<div class='ff' style='grid-column:1/-1'><label class='ffl'>Used Name <span style='font-weight:normal;color:#888;font-size:10px;text-transform:none;letter-spacing:0'>CASUAL NAME OR PARENTS LABEL &mdash; e.g., Tzvi (casual name) or Tzvi &amp; Yehudis (disambiguation)</span></label><input class='ffi' value='"+esc(f.parentsName||"")+"' oninput='FORM.parentsName=this.value' placeholder='e.g., Tzvi &amp; Yehudis'></div>"
+  +"<div class='ff'><label class='ffl'>Home Title <span style='font-weight:normal;font-size:11px'>How your children address you &mdash; shows in YOUR family's report only (e.g., Tatty, Daddy, Abba, Mommy, Imma)</span></label><input class='ffi' value='"+esc(f.homeTitle||"")+"' oninput='FORM.homeTitle=this.value' placeholder='e.g., Tatty or Mommy'></div>"
+  +"</div></div>"
+  +"<div class='fs'><div class='fst'>Dates &mdash; Hebrew auto-fetched from HebCal</div><div class='fsb'>"
+  +"<div class='ff'><label class='ffl'>Date of Birth</label><input class='ffi' type='date' value='"+(f.dob||"")+"' onchange='updDOB(this.value)'><label class='chk' style='margin-top:4px'><input type='checkbox' "+(f.sunset?"checked":"")+" onchange=\"FORM.sunset=this.checked;if(FORM.dob)updDOB(FORM.dob)\"> After sunset</label></div>"
+  +"<div class='ff'><label class='ffl'>Hebrew Date (auto)</label><div class='hbox' id='hdb'>"+(f.hebDate||"<span style='color:#bbb;font-size:11px'>Enter DOB to auto-fetch</span>")+"</div><div class='hsub2' id='hdt'>"+(f.hebDateText||"")+"</div></div>"
+  +"<div class='ff'><label class='ffl'>Yartzheit / A&quot;H</label><label class='chk'><input type='checkbox' "+(f.yartzheit?"checked":"")+" onchange='FORM.yartzheit=this.checked;render()'> Has Yartzheit date (deceased)</label>"+yartzFields+"</div>"
+  +"<div class='ff'><label class='ffl'>Anniversary (men only)</label><input class='ffi' type='date' value='"+(f.annDate||"")+"' onchange='updAnn(this.value)'><label class='chk' style='margin-top:4px'><input type='checkbox' "+(f.sunsetAnn?"checked":"")+" onchange='FORM.sunsetAnn=this.checked;if(FORM.annDate)updAnn(FORM.annDate)'> After sunset (winter weddings often are; summer usually before)</label></div>"
+  +"<div class='ff'><label class='ffl'>Hebrew Anniversary (auto)</label><div class='hbox' id='adb'>"+(f.annHeb||"<span style='color:#bbb;font-size:11px'>Enter date to auto-fetch</span>")+"</div><div class='hsub2' id='adt'>"+(f.annHebText||"")+"</div></div>"
+  +"</div></div>"
+  +"<div class='fs'><div class='fst'>Flags</div><div class='fsb' style='grid-template-columns:repeat(auto-fill,minmax(150px,1fr))'>"
+  +"<label class='chk'><input type='checkbox' "+(f.blood?"checked":"")+" onchange='FORM.blood=this.checked'> Blood Relative</label>"
+  +"<label class='chk'><input type='checkbox' "+(f.deceased?"checked":"")+" onchange='FORM.deceased=this.checked'> Deceased</label></div></div>"
+  +"<div class='fs'><div class='fst'>Contact</div><div class='fsb'>"
+  +"<div class='ff'><label class='ffl'>Email</label><input class='ffi' type='email' value='"+esc(f.email||"")+"' oninput='FORM.email=this.value' placeholder='email@example.com'></div>"
++"<div class='ff'><label class='ffl'>Preferred Channel</label>"
++"<select class='ffi' onchange='FORM.contactChannel=this.value'>"
++"<option value=''"+(!f.contactChannel?' selected':'')+">&#8212; Not set &#8212;</option>"
++"<option value='whatsapp'"+(f.contactChannel==='whatsapp'?' selected':'')+">WhatsApp</option>"
++"<option value='text'"+(f.contactChannel==='text'?' selected':'')+">Text / SMS</option>"
++"<option value='email'"+(f.contactChannel==='email'?' selected':'')+">Email</option>"
++"</select></div>"
++"<div class='ff'><label class='ffl'>Date Preference</label>"
++"<select class='ffi' onchange='FORM.datePref=this.value'>"
++"<option value='hebrew'"+(f.datePref==='hebrew'||!f.datePref?' selected':'')+">Hebrew dates</option>"
++"<option value='english'"+(f.datePref==='english'?' selected':'')+">English dates</option>"
++"<option value='both'"+(f.datePref==='both'?' selected':'')+">Both</option>"
++"</select></div>"
+  +"<div class='ff'><label class='ffl'>Phone</label><input class='ffi' value='"+esc(f.phone||"")+"' oninput='FORM.phone=this.value' placeholder='(555) 000-0000'></div>"
+  +"<div class='ff'><label class='ffl'>Carrier</label><select class='ffi' onchange='FORM.carrier=this.value'>"+carrO+"</select></div>"
+  +"<div class='ff' style='grid-column:1/-1'><label class='ffl'>Notes</label><input class='ffi' value='"+esc(f.notes||"")+"' oninput='FORM.notes=this.value' placeholder='Notes...'></div>"
+  +"</div></div>"
+  +"<div style='display:flex;gap:8px;padding-top:8px'><button class='btn s' onclick='doSave()'>Save Person</button>"+(isEdit?"<button class='btn d' onclick='doDelete()'>Delete</button>":"")+"<button class='btn c' onclick=\"FP=null;ADDSPOUSEFOR=null;gv('list')\">Cancel</button></div>"
+  +(isEdit?childrenPanel(f.id):"")
+  +(isEdit?"<div class='fs'>"+"<div class='fst'>📸 Photos</div>"+"<div class='fsb' id='photo-strip' style='min-height:60px;padding:8px 0'>"+"<em style='color:#999;font-size:12px'>Loading...</em>"+"</div></div>":"")+"</div></div>";
+}
+
+// mkt/mks need to be in JS scope
+function renderReports(){
+  const tabs=[["tehillim","Tehillim"],["birthday","Birthday/Ann"],["monthly","Monthly"],["counts","Counts"],["query","Query"]];
+  const th=tabs.map(([v,l])=>"<div class='rtab"+(RTAB===v?" active":"")+"' onclick=\"RTAB='"+v+"';render()\">"+l+"</div>").join("");
+  const fo=FAM.slice(1,9).map(f=>"<option value='"+f.n+"'"+(RPT_FAM===f.n?" selected":"")+">"+esc(f.full.replace(" & Family",""))+"</option>").join("");
+  const showOpts=RTAB==="birthday"||RTAB==="monthly";
+  let ctl="<div class='rctl'><label>Family: <select onchange='RPT_FAM=+this.value;render()'><option value='-1'"+(RPT_FAM<0?" selected":"")+">All Families</option>"+fo+"</select></label>"+(showOpts?"<label><input type='checkbox' "+(RPT_YEAR?"checked":"")+" onchange='RPT_YEAR=this.checked;render()'> Show Year</label><label><input type='checkbox' "+(RPT_AGES?"checked":"")+" onchange='RPT_AGES=this.checked;render()'> Show Ages</label><label style='margin-left:4px'>Names: <select onchange='RPT_NAME_MODE=this.value;render()' style='font-size:11px;padding:1px 4px'>"+buildNameOpts()+"</select></label>":"")+"<button class='btn n sm' style='margin-left:auto' onclick='doPrint()'>Print</button><button class='btn c sm' onclick='cprint()'>Compact</button><button class='btn teal sm' onclick='smartPrint()' title='Auto-picks best settings for your longest month'>✨ Smart</button><button class='btn c sm' onclick='showPhotoPageForReport()' title='Photo facing page'>&#128247; Photos</button><button class=\'btn c sm\' onclick=\'togglePS()\'>&#9881; Settings</button><button class='btn teal sm' onclick='exportJSON()'>Export</button></div>";
+  let body="";if(SHOW_PS)ctl=renderPSPanel()+ctl;
+  if(RTAB==="tehillim")body=rptTehillim();
+  else if(RTAB==="birthday")body=rptBirthday();
+  else if(RTAB==="monthly")body=rptMonthly();
+  else if(RTAB==="query")body=rptQuery();
+  else body=rptCounts();
+  return"<div class='rtabs'>"+th+"</div>"+ctl+"<div class='panel'><div class='rb2'>"+body+"</div></div>";
+}
+
+function dline(L,R,li,ri){const lp=li>0?" style='padding-left:"+(li*13)+"px'":"";const rp=ri>0?" style='padding-right:"+(ri*13)+"px'":"";return"<div class='rline'><div class='rlft'"+lp+">"+L+"</div><div class='rdots'></div><div class='rrgt'"+rp+">"+R+"</div></div>";}
+function hebRight(eng,heb){if(!eng&&!heb)return"";if(!heb)return esc(eng);if(!eng)return"\u25cf <span class='heb-i'>"+esc(heb)+"</span>";return esc(eng)+" \u25cf <span class='heb-i'>"+esc(heb)+"</span>";}
+function buildNameOpts(){
+  return [["both","Both"],["formal","Formal"],["nick","Casual"]].map(function(o){
+    return "<option value='"+o[0]+"'"+(RPT_NAME_MODE===o[0]?" selected":"")+">"+o[1]+"</option>";
+  }).join("");
+}
+function filteredFams(){return RPT_FAM>=0?FAM.filter(f=>f.n===RPT_FAM):FAM;}
+function filteredPeople(){return RPT_FAM>=0?P.filter(p=>p.familyGroup===RPT_FAM):P;}
+function rptFooter(){return"<div class='rfoot'>"+today()+"</div>";}
+
+// TEHILLIM — symbol on both sides
+function rptTehillim(){
+  const title=RPT_FAM>=0?((FAM[RPT_FAM]||{}).full||"Possick Family"):"Possick Family";
+  let h="<div class='rtit'>"+esc(title)+"</div><div class='rtit-rule'></div>";
+  filteredFams().forEach(fg=>{
+    const fp=P.filter(p=>p.familyGroup===fg.n).sort((a,b)=>a.code.localeCompare(b.code));
+    if(!fp.length)return;
+    if(RPT_FAM<0)h+="<div class='rfam'>"+esc(fg.full)+"</div>";
+    fp.forEach(p=>{
+      const g=p.generation,m=mks(g);
+      const L=m+" "+rptNameT(p);
+      const R="<span class='heb-i' style='font-size:14px'>"+esc(p.hebrewName||"&mdash;")+"</span> "+m;
+      h+=dline(L,R,g,g);
+    });
+  });
+  return h+rptFooter();
+}
+
+// BIRTHDAY/ANN — code-sorted, symbols+indent, first name only for individuals, no maiden except in anniv
+function rptBirthday(){
+  const showYr=RPT_YEAR,showAge=RPT_AGES;
+  const title=RPT_FAM>=0?((FAM[RPT_FAM]||{}).full||"Possick Family"):"Possick Family";
+  let h="<div class='rtit'>"+esc(title)+"</div><div class='rtit-rule'></div>";
+  filteredFams().forEach(fg=>{
+    const ents=[];
+    P.filter(p=>p.familyGroup===fg.n).forEach(p=>{
+      // Birthday: skip deceased (show their yartzheit instead)
+      if(p.dob&&p.hebMonth&&!p.deceased&&!p.yartzheit)
+        ents.push({p,type:"b",sortKey:p.code});
+      // Anniversary
+      if(p.annDate&&p.annMonth&&p.gender==="Male")
+        ents.push({p,type:"a",sortKey:p.code.replace(/\.[bg]$/,"")});
+      // Yartzheit (DOD for deceased)
+      if(p.yartzheit&&p.yartzHebDate)
+        ents.push({p,type:"y",sortKey:p.code});
+    });
+    if(!ents.length)return;
+    ents.sort((a,b)=>a.sortKey.localeCompare(b.sortKey));
+    if(RPT_FAM<0)h+="<div class='rfam'>"+esc(fg.full)+"</div>";
+    ents.forEach(e=>{
+      const g=e.p.generation;
+      const m=mks(g);
+      let nm="",dateStr="",hd="";
+      if(e.type==="a"){nm=m+" "+annName(e.p);dateStr=fdLong(e.p.annDate);hd=e.p.annHeb;}
+      else if(e.type==="b"){nm=m+" "+rptFirst(e.p);dateStr=showYr?fdLong(e.p.dob):fdShort(e.p.dob);hd=e.p.hebDate;}
+      else{nm=m+" "+rptFirst(e.p);const yyr=yr(e.p.yartzdob);dateStr=yyr?"Yartzheit "+yyr:"Yartzheit";hd=e.p.yartzHebDate;}
+      const age=showAge&&e.type==="b"&&e.p.dob?ageF(e.p.dob):null;
+      const ageStr=age!==null?"["+age+"] ":"";
+      const isBold=e.type==="a";
+      const L=isBold?"<strong>"+nm+"</strong>":"<span>"+nm+"</span>";
+      const R=isBold?"<strong>"+esc(ageStr)+hebRight(dateStr,hd)+"</strong>":esc(ageStr)+hebRight(dateStr,hd);
+      h+=dline(L,R,g);
+    });
+  });
+  return h+rptFooter();
+}
+
+// MONTHLY — Nisan-first sort using month NAMES, deceased no birthday, ancestors at bottom
+function rptDisplayKey(p){
+  var used=p.usedName&&!isHonorific(p.usedName)?p.usedName:null;
+  var nick=p.nickName&&!isHonorific(p.nickName)?p.nickName:null;
+  var first;
+  if(RPT_NAME_MODE==="formal")first=p.firstName;
+  else if(RPT_NAME_MODE==="nick")first=used||nick||p.firstName;
+  else first=p.firstName+(nick?" ("+nick+")":"");
+  return first+(p.maidenName?" "+p.maidenName:"")+" "+p.lastName;
+}
+function pdKey(p){const nick=p.nickName&&!/A\"H|Z\"L/i.test(p.nickName)?" ("+p.nickName+")":"";return p.firstName+nick+(p.maidenName?" "+p.maidenName:"")+" "+p.lastName;}
+
+function rptMonthly(){
+  const isAll=RPT_FAM<0;
+  const ppl=filteredPeople();
+  // Hebrew month name → sort number (Nisan-first)
+  const HMN={"\u05E0\u05D9\u05E1\u05DF":1,"\u05D0\u05D9\u05D9\u05E8":2,"\u05E1\u05D9\u05D5\u05DF":3,"\u05EA\u05DE\u05D5\u05D6":4,"\u05D0\u05D1":5,"\u05D0\u05DC\u05D5\u05DC":6,"\u05EA\u05E9\u05E8\u05D9":7,"\u05D7\u05E9\u05D5\u05DF":8,"\u05DB\u05E1\u05DC\u05D5":9,"\u05D8\u05D1\u05EA":10,"\u05E9\u05D1\u05D8":11,"\u05D0\u05D3\u05E8":12};
+  function hebrewMonthSort(s){if(!s)return 0;const w=s.trim().split(/\s+/);for(let i=w.length-1;i>=0;i--){const n=HMN[w[i]];if(n)return n;}return 0;}
+  function getMonthSort(p,isAnn){
+    const name=isAnn?p.annMonth:p.hebMonth;
+    if(name&&MO[name])return MO[name];
+    const heb=isAnn?p.annHeb:p.hebDate;
+    return hebrewMonthSort(heb||"");
+  }
+  const ents=[];
+  ppl.forEach(p=>{
+    // Birthdays: skip deceased
+    if(p.dob&&!p.deceased&&!p.yartzheit){
+      const sm=getMonthSort(p,false);
+      if(sm>0)ents.push({p,type:"b",sm,sd:p.hebDay||0,fg:p.familyGroup});
+    }
+    // Anniversary
+    if(p.annDate&&p.gender==="Male"){
+      const sm=getMonthSort(p,true);
+      if(sm>0)ents.push({p,type:"a",sm,sd:p.annDay||0,fg:p.familyGroup});
+    }
+    // Yartzheit: put in appropriate month if known
+    if(p.yartzheit&&p.yartzHebDate){
+      const sm=hebrewMonthSort(p.yartzHebDate)||99;
+      ents.push({p,type:"y",sm,sd:p.yartzHebDay||0,fg:p.familyGroup});
+    }
+  });
+
+  // Duplicate name detection (birthdays only)
+  function pdKey(p){
+    const nick=p.nickName&&!/A"H|Z"L|a"h|z"l/i.test(p.nickName)?" ("+p.nickName+")":"";
+    return p.firstName+nick+(p.maidenName?" "+p.maidenName:"")+" "+p.lastName;
+  }
+  function buildDupeSet(arr){
+    const nc={};
+    arr.filter(e=>e.type==="b").forEach(e=>{const k=rptDisplayKey(e.p);nc[k]=(nc[k]||0)+1;});
+    return new Set(Object.keys(nc).filter(k=>nc[k]>1));
+  }
+  // Build HTML-safe name for an entry
+  function moEntryName(e,dupeSet,showFamTag){
+    if(e.type==="a")return annName(e.p);
+    // Use mode-aware key for dupe detection (formal=no nick, nick=nick only)
+    const k=rptDisplayKey(e.p);
+    const isDupe=dupeSet&&dupeSet.has(k);
+    const hasManualTag=!!(e.p.parentsName&&e.p.parentsName.trim());
+    let nm=rptNick(e.p);
+    // Only add maiden name when there is a real duplicate in the current list
+    if(isDupe&&e.p.maidenName)nm+=" ("+esc(e.p.maidenName)+")";
+    nm+=" "+esc(e.p.lastName);
+    // Tag ONLY when truly a duplicate in the current displayed list
+    // (single-family report: Avigail is not a duplicate within this family)
+    if(isDupe){
+      var tag=hasManualTag
+        ?e.p.parentsName.replace(/\s*&\s*[Ff]amily.*/,"").trim()
+        :(usedName(e.p)||(FAM[e.fg]||{full:""}).full.replace(/\s*&\s*[Ff]amily.*/,"").trim());
+      if(tag)nm+=" <span style='color:#888;font-size:0.82em'>["+esc(tag)+"]</span>";
+    }
+    return nm;
+  }
+  function renderMonth(mes,moHe,isFirst,dupeSet,showFamTag){
+    let h="<div class='month-group "+(isFirst?"":"rpt-page-break")+"'><div class='rmo-heb'>"+moHe+"</div>";
+    const happy=mes.filter(e=>e.type!=="y");
+    const yartz=mes.filter(e=>e.type==="y");
+    happy.forEach(e=>{
+      const nm=moEntryName(e,dupeSet,showFamTag);
+      const isBold=e.type==="a";
+      const hd=e.type==="a"?e.p.annHeb:e.p.hebDate;
+      const dateStr=e.type==="a"?fdLong(e.p.annDate):(RPT_YEAR?fdLong(e.p.dob):fdShort(e.p.dob));
+      const age=RPT_AGES&&e.type==="b"&&e.p.dob?ageF(e.p.dob):null;
+      const ageStr=age!==null?"["+age+"] ":"";
+      const L=isBold?"<strong>"+nm+"</strong>":nm;
+      const R=isBold?"<strong>"+hebRight(dateStr,hd)+"</strong>":esc(ageStr)+hebRight(dateStr,hd);
+      h+=dline(L,R,0);
+    });
+    if(yartz.length){
+      h+="<div class='ryartz-sep'>&mdash;&mdash;&mdash;&mdash; Yartzheit &mdash;&mdash;&mdash;&mdash;</div>";
+      yartz.forEach(e=>{
+        const nm=moEntryName(e,dupeSet,false);
+        const yyr=yr(e.p.yartzdob);
+        h+=dline(nm,hebRight(yyr?"Yartzheit "+yyr:"Yartzheit",e.p.yartzHebDate),0);
+      });
+    }
+    h+="<div class='rfoot'>"+today()+"</div></div>";return h;
+  }
+
+  if(isAll){
+    ents.sort((a,b)=>a.sm!==b.sm?a.sm-b.sm:a.sd-b.sd);
+    const byM={};ents.forEach(e=>{if(!byM[e.sm])byM[e.sm]=[];byM[e.sm].push(e);});
+    const dupeSet=buildDupeSet(ents);
+    let h="",first=true;
+    HEB_MO.forEach(mo=>{
+      const mes=byM[mo.n];if(!mes||!mes.length)return;
+      h+=renderMonth(mes,mo.he,first,dupeSet,true);first=false;
+    });
+    // Unknown month yartzheit only (truly no month info)
+    if(byM[99]&&byM[99].length){
+      const yartzOnly=byM[99].filter(e=>e.type==="y");
+      if(yartzOnly.length){
+        h+="<div class='month-group "+(first?"":"rpt-page-break")+"'><div class='rmo-heb'>\u05D9\u05D0\u05E8\u05E6\u05D9\u05D9\u05D8</div>";
+        yartzOnly.forEach(e=>{const nm=moEntryName(e,dupeSet,true);const yyr=yr(e.p.yartzdob);h+=dline(nm,hebRight(yyr?"Yartzheit "+yyr:"Yartzheit",e.p.yartzHebDate),0);});
+        h+="</div>";
+      }
+    }
+    return h;
+  } else {
+    ents.sort((a,b)=>a.sm!==b.sm?a.sm-b.sm:a.sd-b.sd);
+    const dupeSet=buildDupeSet(ents);
+    const fg=FAM[RPT_FAM]||{full:""};
+    let h="<div class='rtit'>"+esc(fg.full)+"</div><div class='rtit-rule'></div>";
+    const happy=ents.filter(e=>e.type!=="y");
+    const yartz=ents.filter(e=>e.type==="y");
+    happy.forEach(e=>{
+      const nm=moEntryName(e,dupeSet,false);
+      const isBold=e.type==="a";
+      const hd=e.type==="a"?e.p.annHeb:e.p.hebDate;
+      const dateStr=e.type==="a"?fdLong(e.p.annDate):(RPT_YEAR?fdLong(e.p.dob):fdShort(e.p.dob));
+      const age=RPT_AGES&&e.type==="b"&&e.p.dob?ageF(e.p.dob):null;
+      const ageStr=age!==null?"["+age+"] ":"";
+      h+=dline(isBold?"<strong>"+nm+"</strong>":nm,isBold?"<strong>"+hebRight(dateStr,hd)+"</strong>":esc(ageStr)+hebRight(dateStr,hd),0);
+    });
+    if(yartz.length){
+      h+="<div class='ryartz-sep'>&mdash;&mdash;&mdash;&mdash; Yartzheit &mdash;&mdash;&mdash;&mdash;</div>";
+      yartz.forEach(e=>{const nm=moEntryName(e,dupeSet,false);const yyr=yr(e.p.yartzdob);h+=dline(nm,hebRight(yyr?"Yartzheit "+yyr:"Yartzheit",e.p.yartzHebDate),0);});
+    }
+    return h+rptFooter();
+  }
+}
+
+// COUNTS
+function rptCounts(){const desc=P.filter(p=>p.generation>=1);const blood=desc.filter(p=>p.blood);const gens=[1,2,3,4].map(g=>{const gp=desc.filter(p=>p.generation===g);const bl=gp.filter(p=>p.blood);return{g,name:GN[g],tot:gp.length,bl:bl.length,mi:gp.length-bl.length,boys:bl.filter(p=>p.gender==="Male").length,girls:bl.filter(p=>p.gender==="Female").length};}).filter(x=>x.tot>0);const cards=[["Total Descendants",desc.length],["Blood Relatives",blood.length],["Married In",desc.length-blood.length],["Blood Grandchildren+",blood.filter(p=>p.generation>=2).length]].map(([l,v])=>"<div class='cc'><div class='cn'>"+v+"</div><div class='cl'>"+l+"</div></div>").join("");const rows=gens.map(g=>"<tr style='background:"+(g.g%2?"#f7f4ec":"white")+"'><td>"+mks(g.g)+" "+g.name+"</td><td style='text-align:center'><strong>"+g.tot+"</strong></td><td style='text-align:center'>"+g.bl+"</td><td style='text-align:center'>"+g.mi+"</td><td style='text-align:center'>"+g.boys+"</td><td style='text-align:center'>"+g.girls+"</td></tr>").join("");return"<div class='rtit'>Possick Family Counts</div><p style='text-align:center;font-size:11px;color:#888;margin-bottom:8px'>Abba &amp; Mummy not counted</p><div class='cg'>"+cards+"</div><table style='width:100%;border-collapse:collapse;margin-top:16px;font-size:12px'><thead><tr>"+["Generation","Total","Blood","Married In","Boys","Girls"].map(h=>"<th style='background:var(--navy);color:white;padding:6px 10px;text-align:center'>"+h+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table>"+rptFooter();}
+
+// HANDLERS
+function gv(v){VIEW=v;SOPEN=null;if(v==="add"){FORM=blank();FP=null;ADDSPOUSEFOR=null;}render();}
+function editP(id){const p=P.find(x=>x.id===id);if(!p)return;FORM=Object.assign({},p);VIEW="edit";EDITID=id;SOPEN=null;FP=null;ADDSPOUSEFOR=null;render();document.getElementById("main").scrollTop=0;}
+function addChild(parentId){const parent=P.find(p=>p.id===parentId);if(!parent)return;const spouse=parent.spouseId?P.find(p=>p.id===parent.spouseId):null;const f=blank();if(parent.gender==="Male"){f.fatherId=parent.id;if(spouse)f.motherId=spouse.id;}else{f.motherId=parent.id;if(spouse)f.fatherId=spouse.id;}const dad=P.find(p=>p.id===f.fatherId),mom=P.find(p=>p.id===f.motherId);const bp=dad&&dad.blood?dad:mom&&mom.blood?mom:null;if(bp){f.code=nc(bp.code,"Male",P);f.familyGroup=gFam(bp.code);f.generation=gG(bp.code)+1;f.parentsName=dad&&mom?dad.firstName+" & "+mom.firstName:dad?dad.firstName:mom?mom.firstName:"";}f.lastName=(dad||{}).lastName||(mom||{}).lastName||"";FORM=f;EDITID=null;VIEW="add";FP="Adding child for "+parent.firstName+" "+parent.lastName+(spouse?" & "+spouse.firstName+" "+spouse.lastName:"");render();document.getElementById("main").scrollTop=0;}
+function addSpouseFor(personId){const person=P.find(p=>p.id===personId);if(!person)return;const f=blank();f.gender=person.gender==="Male"?"Female":"Male";f.familyGroup=person.familyGroup;f.generation=person.generation;const c=person.code.split(".");c[4]=f.gender==="Female"?"g":"b";f.code=c.join(".");f.blood=false;f.spouseId=personId;f.lastName=person.lastName;ADDSPOUSEFOR=personId;FORM=f;EDITID=null;VIEW="add";FP="Adding spouse for "+person.firstName+" "+person.lastName;render();document.getElementById("main").scrollTop=0;}
+function toggleSel(sid){if(SOPEN===sid){SOPEN=null;render();return;}SOPEN=sid;render();setTimeout(()=>{const el=document.getElementById("sq-"+sid);if(el)el.focus();},30);document.addEventListener("click",function oc(e){const sw=document.getElementById("sw-"+sid);if(sw&&!sw.contains(e.target)){SOPEN=null;render();}else document.addEventListener("click",oc,{once:true});},{once:true});}
+function setParent(sid,pid){if(sid==="father")FORM.fatherId=pid;else FORM.motherId=pid;SOPEN=null;SQ[sid]="";const dad=P.find(p=>p.id===FORM.fatherId),mom=P.find(p=>p.id===FORM.motherId);const bp=dad&&dad.blood?dad:mom&&mom.blood?mom:null;if(bp){FORM.code=nc(bp.code,FORM.gender,P);FORM.familyGroup=gFam(bp.code);FORM.generation=gG(bp.code)+1;FORM.parentsName=dad&&mom?dad.firstName+" & "+mom.firstName:dad?dad.firstName:mom?mom.firstName:"";}render();}
+function setGend(g){FORM.gender=g;if(FORM.code){const s=FORM.code.split(".");s[4]=g==="Female"?"g":"b";FORM.code=s.join(".");}render();}
+function updDOB(val){FORM.dob=val;const d=document.getElementById("hdb");if(d)d.innerHTML="<span style='color:#aaa;font-size:11px'>Fetching...</span>";clearTimeout(HT);if(!val)return;HT=setTimeout(async()=>{const h=await fH(val,FORM.sunset);if(h){FORM.hebDate=h.hebrew;FORM.hebDateText=h.displayText;FORM.hebMonth=h.hm;FORM.hebMonthNum=h.monthNum;FORM.hebDay=h.hd;FORM.hebYear=h.hy;const d=document.getElementById("hdb"),t=document.getElementById("hdt");if(d)d.innerHTML=esc(h.hebrew);if(t)t.textContent=h.displayText;}else{const d=document.getElementById("hdb");if(d)d.innerHTML="<span style='color:var(--red);font-size:10px'>Could not fetch</span>";}},700);}
+function updYartz(val){FORM.yartzdob=val;if(!val)return;clearTimeout(YT);YT=setTimeout(async()=>{const h=await fH(val,FORM.sunsetYartz);if(h){FORM.yartzHebDate=h.hebrew;const d=document.getElementById("ydb");if(d)d.innerHTML=esc(h.hebrew);}},700);}
+function updAnn(val){FORM.annDate=val;const d=document.getElementById("adb");if(d)d.innerHTML="<span style='color:#aaa;font-size:11px'>Fetching...</span>";clearTimeout(AT);if(!val)return;AT=setTimeout(async()=>{const h=await fH(val,FORM.sunsetAnn);if(h){FORM.annHeb=h.hebrew;FORM.annHebText=h.displayText;FORM.annMonth=h.hm;FORM.annMonthNum=h.monthNum;FORM.annDay=h.hd;const d=document.getElementById("adb"),t=document.getElementById("adt");if(d)d.innerHTML=esc(h.hebrew);if(t)t.textContent=h.displayText;}},700);}
+function doSave(){if(!FORM.firstName.trim()||!FORM.lastName.trim()){alert("First and last name are required.");return;}const id=FORM.id||NID;const person=Object.assign({},FORM,{id:id});if(FORM.id)P=P.map(p=>p.id===id?person:p);else{P=P.concat([person]);NID++;}if(ADDSPOUSEFOR!==null){P=P.map(p=>p.id===ADDSPOUSEFOR?Object.assign({},p,{spouseId:id}):p);ADDSPOUSEFOR=null;}FP=null;scheduleSave();
+  // Stay on edit form — user can hit Next/Prev or Cancel to leave
+  FORM=person;EDITID=id;VIEW="edit";
+  render();
+  toast("Saved ✔",false);
+}
+function doDelete(){if(!confirm("Delete this person?"))return;P=P.filter(p=>p.id!==FORM.id);FP=null;ADDSPOUSEFOR=null;saveLS();gv("list");}
+function newFamilyTree(){
+  const name=prompt("Enter the new family name (e.g., Smith):\n\nThis will download a fresh empty family tree file.\nYour current Possick data is untouched.");
+  if(!name||!name.trim())return;
+  const safe=name.trim().replace(/[^a-z0-9]/gi,"").toLowerCase()||"family";
+  const newKey=safe+"-family-v1";
+  // Get current page HTML and strip SEED + change key/title
+  let h=document.documentElement.outerHTML;
+  h=h.replace(/\/\*SEED_START\*\/const SEED=[\s\S]*?;\/\*SEED_END\*\//,"/*SEED_START*/const SEED=[];/*SEED_END*/");
+  h=h.replace(/const INIT_NID=\d+;/,"const INIT_NID=1;");
+  h=h.replace(/const SK="[^"]+";/,'const SK="'+newKey+'";');
+  h=h.replace(/<title>[^<]*<\/title>/,"<title>"+name.trim()+" Family Tree<\/title>");
+  h=h.replace(/const FAMILY_ID="[^"]+";/,'const FAMILY_ID="'+safe+'";');
+  var fs=h.indexOf("const FAM=[");if(fs>0){var fe=h.indexOf("];",fs)+2;h=h.substring(0,fs)+'const FAM=[{n:0,full:"Root Couple"},{n:1,full:"Branch 1"},{n:2,full:"Branch 2"},{n:3,full:"Branch 3"},{n:4,full:"Branch 4"},{n:5,full:"Branch 5"},{n:6,full:"Branch 6"},{n:7,full:"Branch 7"},{n:8,full:"Branch 8"},{n:9,full:"Yartzheit"}];'+h.substring(fe);}
+  const blob=new Blob([h],{type:"text/html"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  a.href=url;a.download=safe+"-family-tree.html";
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast("Downloaded: "+safe+"-family-tree.html  (your Possick data is safe!)",false);
+}
+var PS={fs:12,top:0.40,side:0.50,bot:0.30};
+function applyPrintCSS(){var s=document.getElementById("prcss")||document.createElement("style");s.id="prcss";s.textContent="@page{margin-top:"+PS.top+"in;margin-right:"+PS.side+"in;margin-bottom:"+PS.bot+"in;margin-left:"+PS.side+"in;size:letter portrait;}.rb2{font-size:"+PS.fs+"pt!important;line-height:1.25!important;}.rline{min-height:1.1em!important;padding:0!important;line-height:1.25!important;}.rtit{font-size:"+(PS.fs+4)+"pt!important;}.rfam{font-size:"+(PS.fs+2)+"pt!important;}.rmo-heb{font-size:"+(PS.fs+6)+"pt!important;}.heb,.heb-i{font-size:"+PS.fs+"pt!important;}";document.head.appendChild(s);}
+function doPrint(){applyPrintCSS();window.print();}
+function cprint(){PS={fs:11,top:0.35,side:0.45,bot:0.25};applyPrintCSS();window.print();PS={fs:12,top:0.40,side:0.50,bot:0.30};}
+var SHOW_PS=false,RPT_NAME_MODE="both",LAST_SYNC="";
+var ANNOUNCE=null; // active announcement panel state
+var NOTIFY_OPEN=false; // daily notification queue open
+var SYNC_STATE="online"; // "online"|"offline"|"conflict"
+var LOCAL_DIRTY=false;   // edits made while offline
+var SERVER_TS="";        // updatedAt when we last loaded from server
+var LOCAL_TS="";         // updatedAt when we last saved locally
+function togglePS(){SHOW_PS=!SHOW_PS;render();}
+function renderPSPanel(){if(!SHOW_PS)return"";
+return"<div class='ps-panel' style='padding:10px 14px;display:flex;gap:16px;flex-wrap:wrap;align-items:center;font-size:12px'>"
++"<strong style='color:var(--navy)'>Print Settings:</strong>"
++"<label>Font <input type='number' min='8' max='16' step='0.5' value='"+PS.fs+"' style='width:52px;padding:2px 4px;border:1px solid var(--border);border-radius:3px;' onchange='PS.fs=+this.value'> pt</label>"
++"<label>Top <input type='number' min='0.2' max='0.8' step='0.05' value='"+PS.top+"' style='width:52px;padding:2px 4px;border:1px solid var(--border);border-radius:3px;' onchange='PS.top=+this.value'> in</label>"
++"<label>Side <input type='number' min='0.2' max='0.8' step='0.05' value='"+PS.side+"' style='width:52px;padding:2px 4px;border:1px solid var(--border);border-radius:3px;' onchange='PS.side=+this.value'> in</label>"
++"<label>Bottom <input type='number' min='0.2' max='0.8' step='0.05' value='"+PS.bot+"' style='width:52px;padding:2px 4px;border:1px solid var(--border);border-radius:3px;' onchange='PS.bot=+this.value'> in</label>"
++"<button class='btn s sm' onclick='doPrint()'>&#128424; Print Now</button>"
++"</div>";}
+// ── SMART PRINT ─────────────────────────────────────────────────────────
+function smartPrint(){
+  var ppl=filteredPeople(),counts={};
+  var HM={"\u05E0\u05D9\u05E1\u05DF":1,"\u05D0\u05D9\u05D9\u05E8":2,"\u05E1\u05D9\u05D5\u05DF":3,"\u05EA\u05DE\u05D5\u05D6":4,"\u05D0\u05D1":5,"\u05D0\u05DC\u05D5\u05DC":6,"\u05EA\u05E9\u05E8\u05D9":7,"\u05D7\u05E9\u05D5\u05DF":8,"\u05DB\u05E1\u05DC\u05D5":9,"\u05D8\u05D1\u05EA":10,"\u05E9\u05D1\u05D8":11,"\u05D0\u05D3\u05E8":12};
+  var moName={1:"Nisan",2:"Iyar",3:"Sivan",4:"Tamuz",5:"Av",6:"Elul",7:"Tishrei",8:"Cheshvan",9:"Kislev",10:"Tevet",11:"Shvat",12:"Adar"};
+  function hmn(s){if(!s)return 0;var w=s.trim().split(/\s+/);for(var i=w.length-1;i>=0;i--){if(HM[w[i]])return HM[w[i]];}return 0;}
+  ppl.forEach(function(p){
+    if(p.dob&&!p.deceased&&!p.yartzheit&&p.hebMonth){var sm=MO[p.hebMonth]||0;if(sm>0)counts[sm]=(counts[sm]||0)+1;}
+    if(p.gender==="Male"&&p.annDate&&p.annMonth){var sa=MO[p.annMonth]||0;if(sa>0)counts[sa]=(counts[sa]||0)+1;}
+    if(p.yartzheit&&p.yartzHebDate){var ym=hmn(p.yartzHebDate);if(ym>0)counts[ym]=(counts[ym]||0)+1;}
+  });
+  var vals=Object.values(counts),maxE=vals.length?Math.max.apply(null,vals):0;
+  var longMo=Object.keys(counts).filter(function(k){return counts[k]===maxE;}).map(function(k){return moName[+k]||k;}).join("/");
+  // Capacity formula: calibrated from real data
+  // 12pt/.40/.30 fits ~35; 11pt/.30/.20 fits ~38-40
+  function pageCap(fs,top,bot){
+    var OVERHEAD=0.45; // Hebrew header + yartzheit separator overhead in inches
+    var PAD=4;         // per-row CSS padding in points
+    return Math.floor((11-top-bot-OVERHEAD)*72/(fs*1.35+PAD));
+  }
+  // Settings: margins reduced first, then font (per user request)
+  var opts=[
+    {fs:12,top:0.40,side:0.50,bot:0.30},
+    {fs:12,top:0.28,side:0.50,bot:0.18},
+    {fs:12,top:0.18,side:0.50,bot:0.12},
+    {fs:11,top:0.38,side:0.50,bot:0.28},
+    {fs:11,top:0.28,side:0.50,bot:0.18},
+    {fs:11,top:0.18,side:0.48,bot:0.12},
+    {fs:11,top:0.12,side:0.45,bot:0.08},
+    {fs:10,top:0.25,side:0.48,bot:0.18},
+    {fs:10,top:0.18,side:0.45,bot:0.12},
+    {fs:10,top:0.12,side:0.42,bot:0.08},
+    {fs: 9,top:0.12,side:0.40,bot:0.08}
+  ];
+  var chosen=opts[opts.length-1];
+  for(var i=0;i<opts.length;i++){if(pageCap(opts[i].fs,opts[i].top,opts[i].bot)>=maxE){chosen=opts[i];break;}}
+  PS=chosen;
+  var cap=pageCap(PS.fs,PS.top,PS.bot);
+  toast("\u2728 Smart: "+PS.fs+"pt top="+PS.top+'" bot='+PS.bot+'" | '+longMo+"="+maxE+" (fits "+cap+")",false);
+  applyPrintCSS();window.print();PS={fs:12,top:0.40,side:0.50,bot:0.30};
+}
+// ── COUNTS ──────────────────────────────────────────────────────────────
+function rptCounts(){
+  const all=P.length;
+  const desc=P.filter(p=>p.generation>=1);
+  const blood=desc.filter(p=>p.blood);
+  const gen1=desc.filter(p=>p.generation===1);
+  const gen1bl=gen1.filter(p=>p.blood),gen1mi=gen1.filter(p=>!p.blood);
+  const gen2=desc.filter(p=>p.generation===2);
+  const gen2bl=gen2.filter(p=>p.blood),gen2mi=gen2.filter(p=>!p.blood);
+  const gen3=desc.filter(p=>p.generation===3);
+  const gen4=desc.filter(p=>p.generation===4);
+  const bys=arr=>arr.filter(p=>p.gender==="Male").length;
+  const gls=arr=>arr.filter(p=>p.gender==="Female").length;
+  const cards=[["Total Family",all],["Blood Descendants",blood.length],["Generations",4],["Great-Grandchildren",gen3.length]]
+    .map(([l,v])=>"<div class='cc'><div class='cn'>"+v+"</div><div class='cl'>"+l+"</div></div>").join("");
+  const hrow=(l,v)=>"<tr><td style='background:#1a2744!important;color:white!important;padding:5px 10px'><strong>"+l+"</strong></td><td style='background:#1a2744!important;color:white!important;text-align:right;padding:5px 14px'><strong>"+v+"</strong></td></tr>";
+  const brow=(l,v,i)=>"<tr><td style='padding:3px 10px;padding-left:"+(10+i*20)+"px'>"+l+"</td><td style='text-align:right;padding:3px 14px;font-weight:bold'>"+v+"</td></tr>";
+  const srow=()=>"<tr><td colspan='2' style='height:6px'></td></tr>";
+  const rows=hrow("Possick Family (incl. Abba & Mummy)",all)
+    +hrow("Blood Relative Descendants (Gen 1\u20134)",blood.length)+srow()
+    +brow("Gen 1 blood children of Abba & Mummy",gen1bl.length,1)
+    +brow("Gen 1 married-in spouses",gen1mi.length,1)+srow()
+    +hrow("Gen 2 \u2014 Blood Grandchildren",gen2bl.length)
+    +brow("Boys",bys(gen2bl),2)+brow("Girls",gls(gen2bl),2)
+    +brow("Married Grandchildren (couples)",gen2bl.filter(p=>p.spouseId&&P.find(s=>s.id===p.spouseId)).length,2)+srow()
+    +hrow("Gen 3 \u2014 Great Grandchildren",gen3.length)
+    +brow("Boys",bys(gen3),2)+brow("Girls",gls(gen3),2)
+    +(gen4.length?srow()+hrow("Gen 4 \u2014 Great Great Grandchildren",gen4.length)
+      +brow("Boys",bys(gen4),2)+brow("Girls",gls(gen4),2):"");
+  return "<div class='rtit'>Possick Family Counts</div>"
+    +"<p style='text-align:center;font-size:11px;color:#888;margin-bottom:6px'>400 includes Abba &amp; Mummy (Gen 0). Gen 3 boys+girls = all Gen 3, blood and married-in.</p>"
+    +"<div class='cg'>"+cards+"</div>"
+    +"<table style='width:100%;max-width:520px;margin:16px auto 0;border-collapse:collapse;font-size:13px'><tbody>"
+    +rows+"</tbody></table>"+rptFooter();
+}
+// ── QUERY ───────────────────────────────────────────────────────────────
+var QF={gens:[],blood:"all",gender:"all",ageMin:"",ageMax:"",upDays:0,hasDOB:"all",cols:{code:false,engName:true,hebName:true,engDOB:true,hebDOB:true,age:true,family:true}};
+function exactAge(dob){
+  if(!dob)return null;
+  const d=new Date(dob),n=new Date();if(isNaN(d))return null;
+  let y=n.getFullYear()-d.getFullYear();
+  let lb=new Date(n.getFullYear(),d.getMonth(),d.getDate());
+  if(lb>n){y--;lb=new Date(n.getFullYear()-1,d.getMonth(),d.getDate());}
+  return{y,days:Math.floor((n-lb)/86400000)};
+}
+function applyQF(){
+  let r=P.slice();
+  if(QF.gens.length)r=r.filter(p=>QF.gens.includes(p.generation));
+  if(QF.blood==="blood")r=r.filter(p=>p.blood);
+  if(QF.blood==="nonblood")r=r.filter(p=>!p.blood);
+  if(QF.gender==="male")r=r.filter(p=>p.gender==="Male");
+  if(QF.gender==="female")r=r.filter(p=>p.gender==="Female");
+  if(QF.hasDOB==="yes")r=r.filter(p=>p.dob);
+  if(QF.hasDOB==="no")r=r.filter(p=>!p.dob);
+  if(QF.ageMin!==""){const mn=+QF.ageMin;r=r.filter(p=>{const a=ageF(p.dob);return a!==null&&a>=mn;});}
+  if(QF.ageMax!==""){const mx=+QF.ageMax;r=r.filter(p=>{const a=ageF(p.dob);return a!==null&&a<=mx;});}
+  if(QF.upDays>0){
+    const now=new Date();
+    r=r.filter(p=>{
+      if(!p.dob)return false;
+      const d=new Date(p.dob);
+      let nx=new Date(now.getFullYear(),d.getMonth(),d.getDate());
+      if(nx<now)nx=new Date(now.getFullYear()+1,d.getMonth(),d.getDate());
+      return(nx-now)/86400000<=QF.upDays;
+    });
+  }
+  if(RPT_FAM>=0)r=r.filter(p=>p.familyGroup===RPT_FAM);
+  return r;
+}
+function qfToggleGen(g){const i=QF.gens.indexOf(g);if(i>=0)QF.gens.splice(i,1);else QF.gens.push(g);render();}
+// ══ QUERY SYSTEM ══════════════════════════════════════════════════════════
+var QF_FILTERS=[]; // [{field, op, value}]
+var QF_COLS=["engName","hebrewName","engDOB","hebDOB","age","family"]; // ordered columns
+var QF_SORT="code";var QF_SORT_DIR=1;
+var QF_ALL_COLS=[
+  ["code","Code"],["engName","English Name"],["hebrewName","Hebrew Name"],
+  ["engDOB","English Birthday"],["hebDOB","Hebrew Birthday"],["age","Exact Age"],
+  ["family","Family"],["gender","Gender"],["generation","Generation"],
+  ["blood","Blood Relative"],["annDate","Anniversary"],["annHeb","Hebrew Anniv."],
+  ["yartzHebDate","Yartzheit Date"],["missing","Missing Data"],["parentsName","Parents Name (editable)"]
+];
+var QF_FIELDS=[
+  ["firstName","First Name"],["lastName","Last Name"],["hebrewName","Hebrew Name"],
+  ["generation","Generation"],["gender","Gender"],["blood","Blood Relative"],
+  ["hasDOB","Has Birthday"],["age","Age (years)"],["ageMin","Age minimum"],["ageMax","Age maximum"],
+  ["upcomingDays","Birthday in next N days"],["family","Family Group"],
+  ["hasMissing","Has Missing Data"],["missingHebName","Missing Hebrew Name"],["missingDOB","Missing Birthday"],["missingHebDOB","Missing Hebrew Birthday"],["missingAnn","Missing Anniversary (married men)"],["isDupe","Has Duplicate Name"],
+  ["hasSpouse","Has Spouse"],["deceased","Is Deceased/Yartzheit"]
+];
+var QF_OPS={
+  "firstName":["contains","equals","starts with","ends with"],
+  "lastName":["contains","equals","starts with","ends with"],
+  "hebrewName":["contains","equals"],
+  "generation":["=","<","<=",">",">="],
+  "gender":["is"],
+  "blood":["is"],
+  "hasDOB":["is"],
+  "age":["=","<","<=",">",">="],
+  "ageMin":[">="],
+  "ageMax":["<="],
+  "upcomingDays":["within (days)"],
+  "family":["is"],
+  "hasMissing":["is"],"missingHebName":["is"],"missingDOB":["is"],"missingHebDOB":["is"],"missingAnn":["is"],
+  "isDupe":["is"],
+  "hasSpouse":["is"],
+  "deceased":["is"]
+};
+function addFilter(){QF_FILTERS.push({field:"firstName",op:"contains",value:""});render();}
+function removeFilter(i){QF_FILTERS.splice(i,1);render();}
+function setFilter(i,k,v){QF_FILTERS[i][k]=v;if(k==="field"){var ops=QF_OPS[v];QF_FILTERS[i].op=ops?ops[0]:"=";QF_FILTERS[i].value="";}render();}
+function toggleCol(c){var i=QF_COLS.indexOf(c);if(i>=0)QF_COLS.splice(i,1);else QF_COLS.push(c);render();}
+function moveColLeft(c){var i=QF_COLS.indexOf(c);if(i>0){QF_COLS.splice(i,1);QF_COLS.splice(i-1,0,c);}render();}
+function moveColRight(c){var i=QF_COLS.indexOf(c);if(i>=0&&i<QF_COLS.length-1){QF_COLS.splice(i,1);QF_COLS.splice(i+1,0,c);}render();}
+
+function applyAllFilters(){
+  const now=new Date();
+  function testFilter(p,f){
+    const v=String(f.value||"").toLowerCase().trim();
+    switch(f.field){
+      case"firstName":{const s=p.firstName.toLowerCase();if(f.op==="contains")return s.includes(v);if(f.op==="equals")return s===v;if(f.op==="starts with")return s.startsWith(v);if(f.op==="ends with")return s.endsWith(v);return true;}
+      case"lastName":{const s=(p.lastName||"").toLowerCase();if(f.op==="contains")return s.includes(v);if(f.op==="equals")return s===v;if(f.op==="starts with")return s.startsWith(v);if(f.op==="ends with")return s.endsWith(v);return true;}
+      case"hebrewName":{return(p.hebrewName||"").toLowerCase().includes(v);}
+      case"generation":{const g=p.generation;const n=+v;if(f.op==="=")return g===n;if(f.op==="<")return g<n;if(f.op==="<=")return g<=n;if(f.op===">")return g>n;if(f.op===">=")return g>=n;return true;}
+      case"gender":return f.value===""||p.gender===f.value;
+      case"blood":return f.value===""||String(p.blood)===(f.value==="true"?"true":"false");
+      case"hasDOB":return f.value===""||Boolean(p.dob)===(f.value==="true");
+      case"age":{const a=ageF(p.dob);if(a===null)return false;const n=+v;if(f.op==="=")return a===n;if(f.op==="<")return a<n;if(f.op==="<=")return a<=n;if(f.op===">")return a>n;if(f.op===">=")return a>=n;return true;}
+      case"ageMin":{const a=ageF(p.dob);return a!==null&&a>=(+v);}
+      case"ageMax":{const a=ageF(p.dob);return a!==null&&a<=(+v);}
+      case"upcomingDays":{if(!p.dob)return false;const d=new Date(p.dob);let nx=new Date(now.getFullYear(),d.getMonth(),d.getDate());if(nx<now)nx=new Date(now.getFullYear()+1,d.getMonth(),d.getDate());return(nx-now)/86400000<=(+v);}
+      case"family":return f.value===""||p.familyGroup===(+f.value);
+      case"hasMissing":{const miss=!p.firstName||!p.lastName||!p.hebrewName||(!p.dob&&!p.yartzheit)||(!p.yartzheit&&p.dob&&!p.hebMonth&&!p.hebDate);return Boolean(miss)===(f.value==="true");}
+      case"missingHebName":return Boolean(!p.hebrewName)===(f.value==="true");
+      case"missingDOB":return Boolean(!p.dob&&!p.yartzheit)===(f.value==="true");
+      case"missingHebDOB":return Boolean(p.dob&&!p.hebMonth)===(f.value==="true");
+      case"missingAnn":return Boolean(p.gender==="Male"&&p.spouseId&&!p.annDate)===(f.value==="true");
+      case"isDupe":{const k=p.firstName+(p.nickName&&!/A\"H|Z\"L/i.test(p.nickName)?" ("+p.nickName+")":"")+(p.maidenName?" "+p.maidenName:"")+" "+p.lastName;const cnt=P.filter(x=>{const xk=x.firstName+(x.nickName&&!/A\"H|Z\"L/i.test(x.nickName)?" ("+x.nickName+")":"")+(x.maidenName?" "+x.maidenName:"")+" "+x.lastName;return xk===k;}).length;return f.value==="true"?cnt>1:cnt===1;}
+      case"hasSpouse":return f.value===""||Boolean(p.spouseId)===(f.value==="true");
+      case"deceased":return f.value===""||Boolean(p.deceased||p.yartzheit)===(f.value==="true");
+      default:return true;
+    }
+  }
+  let res=P.slice();
+  QF_FILTERS.forEach(function(f){if(f.value!==""||["hasDOB","blood","gender","hasMissing","isDupe","hasSpouse","deceased","family"].includes(f.field))res=res.filter(function(p){return testFilter(p,f);});});
+  if(RPT_FAM>=0)res=res.filter(p=>p.familyGroup===RPT_FAM);
+  return res;
+}
+
+function missingDataLabel(p){
+  var m=[];
+  if(!p.firstName)m.push("First Name");
+  if(!p.lastName)m.push("Last Name");
+  if(!p.hebrewName)m.push("Hebrew Name");
+  if(!p.dob&&!p.yartzheit)m.push("Birthday");
+  if(!p.yartzheit&&p.dob&&!p.hebMonth&&!p.hebDate)m.push("Heb Month");
+  if(p.gender==="Male"&&p.spouseId&&!p.annDate)m.push("Anniversary");
+  return m.join(", ");
+}
+
+function getCellValue(p,col){
+  const a=exactAge(p.dob);
+  const fam=(FAM[p.familyGroup]||{full:""}).full.replace(/\s*&\s*[Ff]amily.*/,"").trim();
+  switch(col){
+    case"code":return"<td class='mono' style='font-size:10px;padding:2px 6px'>"+esc(p.code)+"</td>";
+    case"engName":return"<td style='padding:2px 8px'>"+dispName(p,true)+"</td>";
+    case"hebrewName":return"<td class='heb' style='padding:2px 8px;font-size:13px'>"+esc(p.hebrewName||"&mdash;")+"</td>";
+    case"engDOB":return"<td style='font-size:11px;padding:2px 8px;white-space:nowrap'>"+fdLong(p.dob)+"</td>";
+    case"hebDOB":return"<td class='heb' style='font-size:12px;padding:2px 8px'>"+esc(p.hebDate||"")+"</td>";
+    case"age":return"<td style='font-size:11px;padding:2px 8px;white-space:nowrap'>"+(a?a.y+"y "+a.days+"d":"&mdash;")+"</td>";
+    case"family":return"<td style='font-size:11px;padding:2px 8px;color:#666'>"+esc(fam)+"</td>";
+    case"gender":return"<td style='font-size:11px;padding:2px 8px'>"+esc(p.gender||"")+"</td>";
+    case"generation":return"<td style='font-size:11px;padding:2px 8px;text-align:center'>"+p.generation+"</td>";
+    case"blood":return"<td style='font-size:11px;padding:2px 8px;text-align:center'>"+(p.blood?"\u2022":"")+"</td>";
+    case"annDate":return"<td style='font-size:11px;padding:2px 8px;white-space:nowrap'>"+fdLong(p.annDate)+"</td>";
+    case"annHeb":return"<td class='heb' style='font-size:12px;padding:2px 8px'>"+esc(p.annHeb||"")+"</td>";
+    case"yartzHebDate":return"<td class='heb' style='font-size:12px;padding:2px 8px'>"+esc(p.yartzHebDate||"")+"</td>";
+    case"missing":return"<td style='font-size:11px;padding:2px 8px;color:#c00'>"+missingDataLabel(p)+"</td>";
+    case"parentsName":return"<td style='padding:2px 4px' onclick='event.stopPropagation()'>"+"<input type='text' value='"+esc(p.parentsName||"")+"' placeholder='e.g. Yitzy & Devora'"+" style='width:140px;font-size:11px;border:1px solid #ccc;border-radius:3px;padding:2px 4px'"+" onchange='updateParentsName("+p.id+",this.value)'></td>";
+    default:return"<td></td>";
+  }
+}
+
+function setSortCol(c){if(QF_SORT===c)QF_SORT_DIR*=-1;else{QF_SORT=c;QF_SORT_DIR=1;}render();}
+function updateParentsName(id,val){var p=P.find(function(x){return x.id===id;});if(p){p.parentsName=val;scheduleSave();}}
+function addFilter(){QF_FILTERS.push({field:"firstName",op:"contains",value:""});render();}
+function removeFilter(i){QF_FILTERS.splice(i,1);render();}
+function setFilter(i,k,v){
+  QF_FILTERS[i][k]=v;
+  if(k==="field"){var ops=QF_OPS[v];QF_FILTERS[i].op=ops?ops[0]:"=";QF_FILTERS[i].value="";}
+  render();
+}
+function toggleCol(c){var i=QF_COLS.indexOf(c);if(i>=0)QF_COLS.splice(i,1);else QF_COLS.push(c);render();}
+function moveColLeft(c){var i=QF_COLS.indexOf(c);if(i>0){QF_COLS.splice(i,1);QF_COLS.splice(i-1,0,c);}render();}
+function moveColRight(c){var i=QF_COLS.indexOf(c);if(i>=0&&i<QF_COLS.length-1){QF_COLS.splice(i,1);QF_COLS.splice(i+1,0,c);}render();}
+function loadPreset(name){
+  if(name==="missing"){QF_FILTERS=[{field:"hasMissing",op:"is",value:"true"}];QF_COLS=["engName","hebrewName","engDOB","family","missing"];QF_SORT="name";QF_SORT_DIR=1;}
+  else if(name==="dupes"){QF_FILTERS=[{field:"isDupe",op:"is",value:"true"}];QF_COLS=["engName","hebrewName","family","parentsName"];QF_SORT="name";QF_SORT_DIR=1;}
+  else if(name==="nodob"){QF_FILTERS=[{field:"hasDOB",op:"is",value:"false"},{field:"deceased",op:"is",value:"false"}];QF_COLS=["engName","hebrewName","family","generation"];QF_SORT="name";QF_SORT_DIR=1;}
+  else if(name==="noann"){QF_FILTERS=[{field:"missingAnn",op:"is",value:"true"}];QF_COLS=["engName","hebrewName","family","engDOB"];QF_SORT="name";QF_SORT_DIR=1;}
+  else if(name==="bday30"){QF_FILTERS=[{field:"upcomingDays",op:"within (days)",value:"30"}];QF_COLS=["engName","hebrewName","engDOB","hebDOB","age","family"];QF_SORT="age";QF_SORT_DIR=1;}
+  else if(name==="clear"){QF_FILTERS=[];}
+  render();
+}
+function rptQuery(){
+  var res=applyAllFilters().sort(function(a,b){
+    var d=QF_SORT_DIR||1;
+    if(QF_SORT==="name"){var na=pdKey(a).toLowerCase(),nb=pdKey(b).toLowerCase();return d*(na<nb?-1:na>nb?1:0);}
+    if(QF_SORT==="age"){var aa=ageF(a.dob)||999,ab=ageF(b.dob)||999;return d*(aa-ab);}
+    if(QF_SORT==="family")return d*(a.familyGroup-b.familyGroup);
+    if(QF_SORT==="gen")return d*(a.generation-b.generation);
+    return d*a.code.localeCompare(b.code);
+  });
+  var NAVY="background:#1a2744!important;color:white!important;padding:5px 8px;text-align:left";
+  // Presets bar
+  var presets="<div style='display:flex;gap:5px;flex-wrap:wrap;margin-bottom:6px;align-items:center'>"
+    +"<strong style='color:#1a2744;font-size:12px'>Presets:</strong>"
+    +"<button class='btn n sm' onclick='loadPreset(\"missing\")'>Missing Data</button>"
+    +"<button class='btn n sm' onclick='loadPreset(\"dupes\")'>Duplicate Names</button>"
+    +"<button class='btn n sm' onclick='loadPreset(\"nodob\")'>No Birthday</button>"
+    +"<button class='btn n sm' onclick='loadPreset(\"noann\")'>Missing Anniversary</button>"
+    +"<button class='btn n sm' onclick='loadPreset(\"bday30\")'>Next 30 Days</button>"
+    +"<button class='btn d sm' onclick='loadPreset(\"clear\")'>Clear All</button>"
+    +"<span style='color:#888;font-size:11px'>"+res.length+" results</span>"
+    +"</div>";
+  // Filter rows
+  var filterRows="";
+  QF_FILTERS.forEach(function(f,i){
+    var fOpts=QF_FIELDS.map(function(x){return"<option value='"+x[0]+"'"+(f.field===x[0]?" selected":"")+">"+x[1]+"</option>";}).join("");
+    var ops=QF_OPS[f.field]||["="];
+    var oOpts=ops.map(function(o){return"<option value='"+o+"'"+(f.op===o?" selected":"")+">"+o+"</option>";}).join("");
+    var valHtml;
+    if(["blood","hasDOB","hasMissing","isDupe","hasSpouse","deceased","missingHebName","missingDOB","missingHebDOB","missingAnn"].indexOf(f.field)>=0){
+      valHtml="<select onchange='setFilter("+i+",\"value\",this.value)'><option value='true'"+(f.value==="true"?" selected":"")+">Yes</option><option value='false'"+(f.value==="false"?" selected":"")+">No</option></select>";
+    } else if(f.field==="gender"){
+      valHtml="<select onchange='setFilter("+i+",\"value\",this.value)'><option value=''>All</option><option value='Male'"+(f.value==="Male"?" selected":"")+">Male</option><option value='Female'"+(f.value==="Female"?" selected":"")+">Female</option></select>";
+    } else if(f.field==="family"){
+      valHtml="<select onchange='setFilter("+i+",\"value\",this.value)'><option value=''>All</option>"+FAM.map(function(fm){return"<option value='"+fm.n+"'"+(f.value==String(fm.n)?" selected":"")+">"+esc(fm.full)+"</option>";}).join("")+"</select>";
+    } else {
+      var isNum=["age","ageMin","ageMax","generation","upcomingDays"].indexOf(f.field)>=0;
+      valHtml="<input type='"+(isNum?"number":"text")+"' value='"+esc(f.value)+"' style='width:100px' oninput='setFilter("+i+",\"value\",this.value)' placeholder='value'>";
+    }
+    filterRows+="<div style='display:flex;gap:5px;align-items:center;margin-bottom:3px'>"
+      +"<select style='font-size:12px' onchange='setFilter("+i+",\"field\",this.value)'>"+fOpts+"</select>"
+      +"<select style='font-size:12px' onchange='setFilter("+i+",\"op\",this.value)'>"+oOpts+"</select>"
+      +valHtml
+      +"<button class='btn d sm' onclick='removeFilter("+i+")' style='padding:2px 6px'>x</button>"
+      +"</div>";
+  });
+  // Column selector
+  var colBtns=QF_ALL_COLS.map(function(x){
+    var active=QF_COLS.indexOf(x[0])>=0;
+    var idx=QF_COLS.indexOf(x[0]);
+    return"<span style='display:inline-flex;align-items:center;gap:1px;margin:2px'>"
+      +"<button class='btn "+(active?"s":"n")+" sm' onclick='toggleCol(\""+x[0]+"\")' style='font-size:11px'>"+(active?"\u2713 ":"")+x[1]+"</button>"
+      +(active&&idx>0?"<button class='btn n sm' style='padding:1px 4px;font-size:10px' onclick='moveColLeft(\""+x[0]+"\")'>&#9664;</button>":"")
+      +(active&&idx<QF_COLS.length-1?"<button class='btn n sm' style='padding:1px 4px;font-size:10px' onclick='moveColRight(\""+x[0]+"\")'>&#9654;</button>":"")
+      +"</span>";
+  }).join("");
+  var controls="<div class='ps-panel no-print' style='padding:10px 14px;font-size:12px;display:flex;flex-direction:column;gap:6px'>"
+    +presets
+    +"<div><button class='btn s sm' onclick='addFilter()'>+ Add Filter</button>"
+    +(filterRows?"<div style='background:var(--cream2);padding:6px 8px;border-radius:4px;margin-top:4px'>"+filterRows+"</div>":"")
+    +"</div>"
+    +"<div style='border-top:1px solid var(--border);padding-top:6px'>"
+    +"<strong style='color:#1a2744'>Columns</strong> <span style='color:#888;font-size:10px'>(click to toggle, arrows to reorder)</span><br>"
+    +colBtns+"</div>"
+    +"</div>";
+  if(!res.length)return controls+"<div style='text-align:center;color:#999;padding:30px;font-size:13px'>No results matching these filters.</div>";
+  // Build table
+  var SORTMAP={engName:"name",code:"code",age:"age",family:"family",generation:"gen"};
+  var thead="<tr>"+QF_COLS.map(function(c){
+    var nm=(function(){var m={};QF_ALL_COLS.forEach(function(x){m[x[0]]=x[1];});return m;}())[c]||c;
+    var sk=SORTMAP[c]||null;
+    var arrow=sk&&QF_SORT===sk?(QF_SORT_DIR>0?" \u25b2":" \u25bc"):"";
+    if(sk)return"<th style='"+NAVY+";cursor:pointer' data-sort='"+sk+"' onclick='setSortCol(this.dataset.sort)'>"+nm+arrow+"</th>";
+    return"<th style='"+NAVY+"'>"+nm+"</th>";
+  }).join("")+"</tr>";
+  var tbody=res.map(function(p){
+    var cells=QF_COLS.map(function(c){return getCellValue(p,c);}).join("");
+    return"<tr onclick='editP("+p.id+")' style='cursor:pointer;border-bottom:1px solid var(--border)'>"+cells+"</tr>";
+  }).join("");
+  return controls
+    +"<div class='panel'><div class='ph'>Results <span style='font-weight:normal;font-size:12px'>"+res.length+" people &mdash; click row to edit</span></div>"
+    +"<div style='overflow-x:auto'><table style='width:100%;border-collapse:collapse;font-size:12px'>"
+    +"<thead>"+thead+"</thead><tbody>"+tbody+"</tbody></table></div></div>"
+    +rptFooter();
+}
+
+
+
+
+// ══ PHOTO SYSTEM ══════════════════════════════════════════════════════
+var PHOTO_CACHE={};
+
+async function loadPhotos(personId){
+  if(PHOTO_CACHE[personId]!==undefined)return PHOTO_CACHE[personId];
+  try{
+    var doc=await db.collection("families").doc(FAMILY_ID).collection("photos").doc(String(personId)).get();
+    var data=doc.exists?doc.data():{shots:[]};
+    PHOTO_CACHE[personId]=data;return data;
+  }catch(e){PHOTO_CACHE[personId]={shots:[]};return{shots:[]};}
+}
+async function savePhotos(personId,photoData){
+  PHOTO_CACHE[personId]=photoData;
+  await db.collection("families").doc(FAMILY_ID).collection("photos").doc(String(personId)).set(photoData);
+}
+function compressImage(file,maxPx){
+  return new Promise(function(resolve){
+    var img=new Image(),url=URL.createObjectURL(file);
+    img.onload=function(){
+      var scale=Math.min(maxPx/img.width,maxPx/img.height,1);
+      var c=document.createElement("canvas");
+      c.width=Math.round(img.width*scale);c.height=Math.round(img.height*scale);
+      c.getContext("2d").drawImage(img,0,0,c.width,c.height);
+      URL.revokeObjectURL(url);resolve(c.toDataURL("image/jpeg",0.82));
+    };img.src=url;
+  });
+}
+async function renderPhotoStrip(personId){
+  var data=await loadPhotos(personId);
+  var shots=data.shots||[];
+  var strip=shots.map(function(s,i){
+    return "<div style='display:inline-block;text-align:center;margin:4px;position:relative'>"
+      +"<img src='"+s.img+"' style='width:96px;height:116px;object-fit:cover;object-position:center top;border-radius:50%;border:2px solid #c8a84b'>"
+      +"<div style='font-size:10px;color:#666;margin-top:2px'>"+(s.year||"")+(s.caption?" \u2022 "+s.caption:"")+"</div>"
+      +"<button onclick='deletePhoto("+personId+","+i+")' style='position:absolute;top:2px;right:2px;background:#c00;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:1'>x</button>"
+      +"</div>";
+  }).join("");
+  var el=document.getElementById("photo-strip");
+  if(el)el.innerHTML=strip||"<span style='color:#999;font-size:12px'>No photos yet.</span>";
+}
+async function deletePhoto(personId,idx){
+  if(!confirm("Delete this photo?"))return;
+  var data=await loadPhotos(personId);
+  data.shots.splice(idx,1);
+  await savePhotos(personId,data);renderPhotoStrip(personId);
+}
+var BLANK_OVAL="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='96'%3E%3Cellipse cx='40' cy='48' rx='40' ry='48' fill='%23e8e0cc'/%3E%3Ctext x='50%25' y='55%25' font-size='26' fill='%23bbb' text-anchor='middle'%3E%3F%3C/text%3E%3C/svg%3E";
+
+// Build one photo cell
+async function photoCell(p){
+  var data=await loadPhotos(p.id);
+  var shots=data.shots||[];
+  var src=shots.length?shots[0].thumb:BLANK_OVAL;
+  var isYtz=!!(p.yartzheit||p.deceased);
+  // Use same name resolution as monthly report (homeTitle > used > nick > firstName)
+  var first;
+  if(p.homeTitle&&p.homeTitle.trim()&&RPT_FAM>=0&&p.familyGroup===RPT_FAM){
+    first=p.homeTitle.trim();
+  } else {
+    var used=p.usedName&&!isHonorific(p.usedName)?p.usedName.trim():null;
+    if(!used&&p.parentsName&&p.parentsName.indexOf("&")<0&&p.parentsName.trim())
+      used=p.parentsName.trim();
+    var nick=p.nickName&&!isHonorific(p.nickName)?p.nickName:null;
+    first=used||nick||p.firstName;
+  }
+  // Suffix A"H / Z"L only if not already in the name
+  var suffix="";
+  if(isYtz&&!/A.H|Z.L/i.test(first))
+    suffix=p.gender==="Female"?" A\u201dH":" Z\u201dL";
+  var border=isYtz?"1.5px solid #999":"1.5px solid #c8a84b";
+  var nstyle=isYtz?"color:#666;font-style:italic":"";
+  return "<div style='display:inline-block;text-align:center;margin:3px 5px;vertical-align:top;width:88px'>"
+    +"<img src='"+src+"' style='width:80px;height:96px;object-fit:cover;object-position:center top;border-radius:50%;border:"+border+"'>"
+    +"<div style='font-size:9.5pt;margin-top:2px;word-break:break-word;line-height:1.2;"+nstyle+"'>"+esc(first)+suffix+"</div>"
+    +"</div>";
+}
+
+// Yartzheit section divider
+function ytzDivider(){
+  return "<div style='display:block;width:100%;border-top:1px solid #aaa;margin:10px 2px 6px;text-align:center'>"
+    +"<span style='font-size:9pt;color:#888;background:white;padding:0 10px;position:relative;top:-0.65em'>"
+    +"\u05d6\u05db\u05e8\u05d5\u05e0\u05dd \u05dc\u05d1\u05e8\u05db\u05d4</span></div>"; // זכרונם לברכה
+}
+
+// Render groups — each group: {label, people, yartzheits}
+// label = section header (null for no header)
+// people = living/main people
+// yartzheits = optional array to show after a divider
+async function buildPhotoPage(groups,pageTitle){
+  var sections=[];
+  for(var gi=0;gi<groups.length;gi++){
+    var grp=groups[gi];
+    var sh="";
+    if(grp.label)sh+="<div style='font-size:11pt;font-weight:bold;color:#1a2744;border-bottom:1px solid #ccc;margin:12px 0 5px;padding-bottom:2px'>"+esc(grp.label)+"</div>";
+    // Main people
+    var cells=await Promise.all(grp.people.map(photoCell));
+    sh+="<div>"+cells.join("")+"</div>";
+    // Yartzheit people (if any) with divider
+    if(grp.yartzheits&&grp.yartzheits.length){
+      var ycells=await Promise.all(grp.yartzheits.map(photoCell));
+      sh+=ytzDivider()+"<div>"+ycells.join("")+"</div>";
+    }
+    sections.push(sh);
+  }
+  return "<div style='padding:14px'>"
+    +(pageTitle?"<div style='font-size:14pt;font-weight:bold;text-align:center;margin-bottom:10px'>"+esc(pageTitle)+"</div>":"")
+    +sections.join("")+"</div>";
+}
+
+function openPhotoWindow(html,title){
+  var w=window.open("","_blank");
+  w.document.write("<!DOCTYPE html><html><head><title>"+title+"</title>"
+    +"<style>body{font-family:serif;margin:0;background:white;} @media print{.np{display:none;}}</style></head>"
+    +"<body>"+html
+    +"<div class='np' style='text-align:center;padding:14px'>"
+    +"<button onclick='window.print()' style='padding:8px 20px;font-size:14px;cursor:pointer'>Print</button>"
+    +"</div></body></html>");
+  w.document.close();
+}
+
+// Birthday/Ann photo page:
+// Same family order as the report; yartzheits after living within each family
+async function showBdayPhotoPage(){
+  toast("Building photo page...",false);
+  var groups=[];
+  filteredFams().forEach(function(fg){
+    var fgn=fg.n!==undefined?fg.n:fg;
+    var lbl=(fg.full||"").replace(/\s*&\s*[Ff]amily.*/,"");
+    var living=P.filter(function(p){return p.familyGroup===fgn&&!p.yartzheit;})
+                .sort(function(a,b){return a.code.localeCompare(b.code);});
+    var ytz=P.filter(function(p){return p.familyGroup===fgn&&p.yartzheit;})
+             .sort(function(a,b){return a.code.localeCompare(b.code);});
+    if(living.length||ytz.length)groups.push({label:lbl,people:living,yartzheits:ytz});
+  });
+  if(!groups.length){toast("No people",false);return;}
+  var title=(RPT_FAM>=0?(FAM[RPT_FAM]||{full:"Family"}).full.replace(/\s*&\s*[Ff]amily.*/,""):"Possick Family")+" \u2014 Photos";
+  openPhotoWindow(await buildPhotoPage(groups,title),title);
+}
+
+
+
+
+
+
+// Monthly photo page — mimics monthly report exactly:
+// Single family = one page (all months), family name as header
+// All families  = one page per Hebrew month, Hebrew month as header
+async function showMonthlyPhotoPage(){
+  toast("Building photo page...",false);
+
+  var isAll=RPT_FAM<0;
+  var famTitle=isAll?"Possick Family":(FAM[RPT_FAM]||{full:"Family"}).full.replace(/\s*&\s*[Ff]amily.*/,"");
+  var famFull=isAll?"Possick Family":(FAM[RPT_FAM]||{full:"Family"}).full; // full name with "& Family"
+
+  function toMoNum(s){
+    if(!s)return 99;
+    var v=MO[s]||MO[s.trim()];if(v)return v;
+    var w=s.trim().split(/\s+/);
+    for(var i=w.length-1;i>=0;i--){if(MO[w[i]])return MO[w[i]];}
+    return 99;
+  }
+  function moNumToHe(n){for(var i=0;i<HEB_MO.length;i++){if(HEB_MO[i].n===n)return HEB_MO[i].he;}return "";}
+
+  var all=filteredPeople();
+  if(!isAll)all=all.filter(function(p){return p.familyGroup===RPT_FAM;});
+
+  var css="@import url('https://fonts.googleapis.com/css2?family=Frank+Ruhl+Libre:wght@400;700&display=swap');"
+    +"body{font-family:'Frank Ruhl Libre',serif;margin:0;background:white;}"
+    +".ph-page{padding:16px 20px;}"
+    +".fam-header{font-size:15pt;font-weight:bold;text-align:center;color:#1a2744;"
+    +"border-bottom:2px solid #333;padding-bottom:5px;margin-bottom:12px;}"
+    +".rmo-heb{font-family:'Frank Ruhl Libre','Noto Serif Hebrew',serif;"
+    +"font-size:22pt;font-weight:bold;direction:rtl;text-align:center;"
+    +"border-bottom:2px solid #333;padding-bottom:4px;margin:6px 0 10px;}"
+    +".ytz-sep{display:block;width:100%;border-top:1px solid #aaa;margin:10px 0 6px;text-align:center;}"
+    +".ytz-label{font-size:9pt;color:#888;background:white;padding:0 10px;position:relative;top:-0.65em;}"
+    +"@media print{.np{display:none;}}";
+
+  var bodyHtml="";
+
+  if(!isAll){
+    // ── SINGLE FAMILY: one page, family name header, photos in month order ──
+    var living=all.filter(function(p){return !p.yartzheit&&p.hebMonth;})
+                  .sort(function(a,b){return toMoNum(a.hebMonth)*100+(a.hebDay||0)-toMoNum(b.hebMonth)*100-(b.hebDay||0);});
+    var ytz=all.filter(function(p){return p.yartzheit&&p.yartzHebDate;})
+               .sort(function(a,b){return toMoNum(a.yartzHebDate)*100+(parseInt(a.yartzHebDay)||0)-toMoNum(b.yartzHebDate)*100-(parseInt(b.yartzHebDay)||0);});
+
+    var cells=await Promise.all(living.map(photoCell));
+    var ycells=await Promise.all(ytz.map(photoCell));
+
+    bodyHtml="<div class='ph-page'>"
+      +"<div class='fam-header'>"+esc(famFull)+"</div>"
+      +"<div>"+cells.join("")+"</div>"
+      +(ycells.length
+        ?"<div class='ytz-sep'><span class='ytz-label'>\u05d6\u05db\u05e8\u05d5\u05e0\u05dd \u05dc\u05d1\u05e8\u05db\u05d4</span></div>"
+         +"<div>"+ycells.join("")+"</div>"
+        :"")
+      +"</div>";
+
+  } else {
+    // ── ALL FAMILIES: one page per Hebrew month, Hebrew header ──
+    var moMap={};
+    function bucket(num,p,isYtz){
+      if(!moMap[num])moMap[num]={n:num,living:[],yartzheits:[]};
+      if(isYtz)moMap[num].yartzheits.push(p);else moMap[num].living.push(p);
+    }
+    all.filter(function(p){return !p.yartzheit&&p.hebMonth;})
+       .sort(function(a,b){return toMoNum(a.hebMonth)*100+(a.hebDay||0)-toMoNum(b.hebMonth)*100-(b.hebDay||0);})
+       .forEach(function(p){bucket(toMoNum(p.hebMonth),p,false);});
+    all.filter(function(p){return p.yartzheit&&p.yartzHebDate;})
+       .sort(function(a,b){return toMoNum(a.yartzHebDate)*100+(parseInt(a.yartzHebDay)||0)-toMoNum(b.yartzHebDate)*100-(parseInt(b.yartzHebDay)||0);})
+       .forEach(function(p){
+         var n=toMoNum(p.yartzHebDate.trim());
+         if(n===99){var w=p.yartzHebDate.trim().split(/\s+/);for(var i=0;i<w.length;i++){if(MO[w[i]]){n=MO[w[i]];break;}}}
+         if(n<99)bucket(n,p,true);
+       });
+
+    var moNums=Object.keys(moMap).map(Number).sort(function(a,b){return a-b;});
+    var sections=[];
+    for(var mi=0;mi<moNums.length;mi++){
+      var grp=moMap[moNums[mi]];
+      var moHe=moNumToHe(grp.n);
+      var cells2=await Promise.all(grp.living.map(photoCell));
+      var ycells2=await Promise.all(grp.yartzheits.map(photoCell));
+      var pb=mi>0?"page-break-before:always;":"";
+      sections.push("<div class='ph-page' style='"+pb+"'>"
+        +"<div class='rmo-heb'>"+moHe+"</div>"
+        +"<div>"+cells2.join("")+"</div>"
+        +(ycells2.length
+          ?"<div class='ytz-sep'><span class='ytz-label'>\u05d6\u05db\u05e8\u05d5\u05e0\u05dd \u05dc\u05d1\u05e8\u05db\u05d4</span></div>"
+           +"<div>"+ycells2.join("")+"</div>"
+          :"")
+        +"</div>");
+    }
+    bodyHtml=sections.join("");
+  }
+
+  if(!bodyHtml){toast("No people with Hebrew dates",false);return;}
+  var w=window.open("","_blank");
+  w.document.write("<!DOCTYPE html><html><head>"
+    +"<title>"+famTitle+" Monthly Photos</title>"
+    +"<style>"+css+"</style></head>"
+    +"<body>"+bodyHtml
+    +"<div class='np' style='text-align:center;padding:14px'>"
+    +"<button onclick='window.print()' style='padding:8px 20px;font-size:14px;cursor:pointer'>Print</button>"
+    +"</div></body></html>");
+  w.document.close();
+}
+
+
+function showPhotoPageForReport(){if(RTAB==="monthly")showMonthlyPhotoPage();else showBdayPhotoPage();}
+
+async function uploadPhoto(personId){
+  var inp=document.createElement("input");inp.type="file";inp.accept="image/*";
+  inp.onchange=async function(e){
+    var file=e.target.files[0];if(!file)return;
+    toast("Compressing & uploading...",false);
+    var thumb=await compressImage(file,120);
+    var img=await compressImage(file,320);
+    var year=prompt("Year this photo was taken (e.g., 2024):",""+new Date().getFullYear())||"";
+    var caption=prompt("Caption (optional, press OK to skip):","") || "";
+    var data=await loadPhotos(personId);
+    if(!data.shots)data.shots=[];
+    data.shots.unshift({thumb:thumb,img:img,year:year,caption:caption,uploadedAt:new Date().toISOString()});
+    await savePhotos(personId,data);
+    toast("Photo saved! ("+data.shots.length+" photo"+(data.shots.length>1?"s":"")+")",false);
+    // Refresh just the photo strip without rebuilding whole form
+    renderPhotoStrip(personId);
+  };
+  inp.click();
+}
+
+async function deletePhoto(personId,idx){
+  if(!confirm("Delete this photo?"))return;
+  var data=await loadPhotos(personId);
+  data.shots.splice(idx,1);
+  await savePhotos(personId,data);
+  render();
+}
+
+// Render photo strip for edit form
+async function renderPhotoStrip(personId){
+  var data=await loadPhotos(personId);
+  var shots=data.shots||[];
+  var strip=shots.map(function(s,i){
+    return"<div style='display:inline-block;text-align:center;margin:4px;position:relative'>"
+      +"<img src='"+s.img+"' style='width:96px;height:116px;object-fit:cover;object-position:center top;border-radius:50%;border:2px solid var(--gold)'>"
+      +"<div style='font-size:10px;color:#666;margin-top:2px'>"+(s.year||"")+(s.caption?" \u2022 "+s.caption:"")+"</div>"
+      +"<button onclick='deletePhoto("+personId+","+i+")' style='position:absolute;top:2px;right:2px;background:#c00;color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:11px;cursor:pointer;line-height:1' title='Delete'>x</button>"
+      +"</div>";
+  }).join("");
+  var el=document.getElementById("photo-strip");
+  if(el)el.innerHTML=strip||"<span style='color:#999;font-size:12px'>No photos yet</span>";
+}
+
+// Photo grid for report — returns HTML grid of photos for an array of people
+async function buildPhotoGrid(people,title){
+  var cells=await Promise.all(people.map(async function(p){
+    var data=await loadPhotos(p.id);
+    var shots=data.shots||[];
+    var src=shots.length?shots[0].thumb:"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='90'%3E%3Crect width='90' height='90' fill='%23e8e0cc'/%3E%3Ctext x='50%25' y='55%25' font-size='28' fill='%23999' text-anchor='middle'%3E%3F%3C/text%3E%3C/svg%3E";
+    var first=p.nickName&&!/A"H|Z"L/i.test(p.nickName)?p.nickName:p.firstName;
+    return"<div style='display:inline-block;text-align:center;margin:4px 6px;vertical-align:top;width:90px'>"
+      +"<img src='"+src+"' style='width:80px;height:96px;object-fit:cover;object-position:center top;border-radius:50%;border:1.5px solid #aaa'>"
+      +"<div style='font-size:10pt;margin-top:2px;word-break:break-word'>"+esc(first)+"</div>"
+      +"</div>";
+  }));
+  return"<div style='break-before:page;padding:20px'>"
+    +(title?"<div style='font-size:14pt;font-weight:bold;text-align:center;margin-bottom:12px;font-family:\"Frank Ruhl Libre\",serif'>"+esc(title)+"</div>":"")
+    +"<div style='text-align:center'>"+cells.join("")+"</div>"
+    +"</div>";
+}
+
+function showConflictDialog(serverTS, localTS, serverData){
+  var fmt=function(ts){
+    if(!ts)return "unknown";
+    var d=new Date(ts);
+    return d.toLocaleDateString("en-US",{month:"short",day:"numeric"})+" "+
+           (d.getHours()%12||12)+":"+(("0"+d.getMinutes()).slice(-2))+(d.getHours()<12?"am":"pm");
+  };
+  var msg="<div style='padding:20px;max-width:420px'>"
+    +"<h3 style='color:#c00;margin:0 0 12px'>\u26a0\ufe0f Sync Conflict</h3>"
+    +"<p style='margin:0 0 8px'>Both devices made changes while disconnected:</p>"
+    +"<div style='background:#f5f0e8;padding:10px;border-radius:6px;margin-bottom:14px;font-size:13px'>"
+    +"<div>\u2601\ufe0f <strong>Server</strong> (another device): saved "+fmt(serverTS)+"</div>"
+    +"<div>\U0001f4f1 <strong>This device</strong>: saved "+fmt(localTS)+"</div>"
+    +"</div>"
+    +"<p style='margin:0 0 14px;font-size:13px'>Which data should be kept?</p>"
+    +"<div style='display:flex;gap:8px;flex-wrap:wrap'>"
+    +"<button onclick='resolveConflict(\"server\")' style='flex:1;padding:8px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer;font-size:13px'>"
+    +"\u2601\ufe0f Keep Server<br><small>(discard my offline edits)</small></button>"
+    +"<button onclick='resolveConflict(\"local\")' style='flex:1;padding:8px;background:#2e7d32;color:white;border:none;border-radius:5px;cursor:pointer;font-size:13px'>"
+    +"\U0001f4f1 Keep My Changes<br><small>(overwrite server)</small></button>"
+    +"</div></div>";
+  // Store server data for resolution
+  window._conflictServerData=serverData;
+  // Show as modal overlay
+  var overlay=document.createElement("div");
+  overlay.id="conflict-overlay";
+  overlay.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9999;display:flex;align-items:center;justify-content:center";
+  overlay.innerHTML="<div style='background:white;border-radius:10px;box-shadow:0 8px 32px rgba(0,0,0,0.3)'>"+msg+"</div>";
+  document.body.appendChild(overlay);
+}
+
+function resolveConflict(choice){
+  var overlay=document.getElementById("conflict-overlay");
+  if(overlay)overlay.remove();
+  if(choice==="server"){
+    var d=window._conflictServerData;
+    if(d){P=d.people||[];NID=d.nextId||NID;LAST_SYNC=d.updatedAt||"";SERVER_TS=LAST_SYNC;}
+    LOCAL_DIRTY=false;SYNC_STATE="online";render();setSyncStatus("synced");
+    toast("Server data restored.",false);
+  } else {
+    LOCAL_DIRTY=false;SYNC_STATE="online";
+    scheduleSave(); // push local data to server
+    toast("Your changes saved to server.",false);
+  }
+  window._conflictServerData=null;
+}
+
+function navP(dir){
+  // Get current sorted list (same order as People tab)
+  var list=P.slice().sort(function(a,b){return a.code.localeCompare(b.code);});
+  if(SRCH){var q=SRCH.toLowerCase();list=list.filter(function(p){return(p.firstName+" "+p.lastName+" "+p.code).toLowerCase().includes(q);});}
+  if(FFAM>=0)list=list.filter(function(p){return p.familyGroup===FFAM;});
+  var idx=list.findIndex(function(p){return p.id===EDITID;});
+  if(idx<0)return;
+  var next=list[idx+dir];
+  if(next)editP(next.id);
+}
+
+// ═══════════════════════════════════════════════════════
+// ANNOUNCEMENT + NOTIFICATION ENGINE
+// ═══════════════════════════════════════════════════════
+
+var ANNOUNCE_STATE = null; // {type,pid,p2name,extra,msg}
+var NOTIFY_OPEN = false;
+
+// ── Helpers ──────────────────────────────────────────
+function casualFirst(p){
+  if(!p)return "";
+  if(p.homeTitle&&p.homeTitle.trim()&&RPT_FAM>=0&&p.familyGroup===RPT_FAM)return p.homeTitle.trim();
+  var used=p.usedName&&!isHonorific(p.usedName)?p.usedName.trim():null;
+  if(!used&&p.parentsName&&p.parentsName.indexOf("&")<0&&p.parentsName.trim())used=p.parentsName.trim();
+  return used||(p.nickName&&!isHonorific(p.nickName)?p.nickName:null)||p.firstName||"";
+}
+function casualCouple(dad,mom){
+  if(dad&&mom)return casualFirst(dad)+" & "+casualFirst(mom);
+  if(dad)return casualFirst(dad);
+  if(mom)return casualFirst(mom);
+  return "";
+}
+function personParents(p){
+  var dad=P.find(x=>x.id===p.fatherId)||null;
+  var mom=P.find(x=>x.id===p.motherId)||null;
+  if(dad&&!mom&&dad.spouseId)mom=P.find(x=>x.id===dad.spouseId)||null;
+  return {dad,mom};
+}
+function personGrandparents(p){
+  var {dad,mom}=personParents(p);
+  var gps=[];
+  if(dad){var gd=personParents(dad);if(gd.dad||gd.mom)gps.push(gd);}
+  if(mom){var gm=personParents(mom);if(gm.dad||gm.mom)gps.push(gm);}
+  return gps;
+}
+function sendLink(person, msg){
+  var ch=person.contactChannel||"";
+  var phone=(person.phone||"").replace(/\D/g,"");
+  var enc=encodeURIComponent(msg);
+  if(ch==="whatsapp"&&phone)return "https://wa.me/"+phone+"?text="+enc;
+  if(ch==="text"&&phone)return "sms:+"+phone+"?body="+enc;
+  if(ch==="email"&&person.email)return "mailto:"+person.email+"?subject=Family+Update&body="+enc;
+  // No channel set — infer best option
+  if(phone)return "https://wa.me/"+phone+"?text="+enc; // default to WhatsApp if phone exists
+  if(person.email)return "mailto:"+person.email+"?subject=Family+Update&body="+enc;
+  return "https://wa.me/?text="+enc;
+}
+function hasSendInfo(p){
+  return !!(p.phone||p.email);
+}
+function dateStr(p, heb, eng){
+  var pref=p.datePref||"hebrew";
+  if(pref==="both")return eng+(heb?" / "+heb:"");
+  if(pref==="english")return eng;
+  return heb||eng;
+}
+function channelIcon(p){
+  var ch=p.contactChannel||"";
+  if(ch==="whatsapp")return "📱";
+  if(ch==="text")return "💬";
+  if(ch==="email")return "📧";
+  return "📤";
+}
+
+// ── ANNOUNCEMENT PANEL ────────────────────────────────
+function showAnnounce(type, pid){
+  ANNOUNCE_STATE={type:type||"birth_boy",pid:pid||null,p2name:"",extra:"",msg:""};
+  rebuildAnnounceMsg();
+  var panel=document.getElementById("announce-panel");
+  if(!panel){
+    panel=document.createElement("div");
+    panel.id="announce-panel";
+    panel.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:flex-start;justify-content:center;padding-top:40px;box-sizing:border-box;overflow-y:auto";
+    document.body.appendChild(panel);
+  }
+  renderAnnouncePanel();
+}
+function closeAnnounce(){
+  ANNOUNCE_STATE=null;
+  var p=document.getElementById("announce-panel");
+  if(p)p.remove();
+}
+function rebuildAnnounceMsg(){
+  if(!ANNOUNCE_STATE)return;
+  var s=ANNOUNCE_STATE;
+  var p=s.pid?P.find(x=>x.id===s.pid):null;
+  var par=p?personParents(p):null;
+  var coupleStr=par?casualCouple(par.dad,par.mom):"";
+  var pname=p?casualFirst(p):"";
+  var msg="";
+  if(s.type==="birth_boy"){
+    msg=coupleStr?"Mazel Tov to "+coupleStr+" on the birth of a baby boy!":"Mazel Tov on the birth of a baby boy!";
+    if(pname&&pname!==p.firstName)msg+=" His name is "+pname+"!";
+    msg+=" 🎉";
+  } else if(s.type==="birth_girl"){
+    msg=coupleStr?"Mazel Tov to "+coupleStr+" on the birth of a baby girl!":"Mazel Tov on the birth of a baby girl!";
+    if(pname&&pname!==p.firstName)msg+=" Her name is "+pname+"!";
+    msg+=" 🎉";
+  } else if(s.type==="engagement"){
+    var who=pname||(p?(p.firstName):"[name]");
+    var gender=p&&p.gender==="Female"?"her":"his";
+    var to=s.p2name?(" to "+s.p2name):"";
+    msg="Mazel Tov to "+who+" on "+gender+" engagement"+to+"! 🎊";
+  } else if(s.type==="wedding"){
+    var who2=pname||(p?p.firstName:"[name]");
+    var to2=s.p2name?" and "+s.p2name:"";
+    msg="Mazel Tov to "+who2+to2+" on their wedding! 🎉💍";
+  } else if(s.type==="custom"){
+    msg=s.msg||"";
+  }
+  if(s.type!=="custom")s.msg=msg+(s.extra?"\n\n"+s.extra:"");
+  else if(!s.msg)s.msg="";
+}
+function renderAnnouncePanel(){
+  var panel=document.getElementById("announce-panel");
+  if(!panel||!ANNOUNCE_STATE)return;
+  var s=ANNOUNCE_STATE;
+  var searchRes="";
+  if(s.search&&s.search.length>1){
+    var hits=P.filter(function(x){
+      return (x.firstName+" "+x.lastName).toLowerCase().includes(s.search.toLowerCase());
+    }).slice(0,8);
+    searchRes=hits.map(function(x){
+      return "<div onclick='ANNOUNCE_STATE.pid="+x.id+";ANNOUNCE_STATE.search=\"\";rebuildAnnounceMsg();renderAnnouncePanel()' "
+        +"style='padding:6px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px' "
+        +"onmouseover='this.style.background=\"#f0f4ff\"' onmouseout='this.style.background=\"\"'>"
+        +esc(x.firstName)+" "+esc(x.lastName)+"</div>";
+    }).join("");
+  }
+  var selPerson=s.pid?P.find(x=>x.id===s.pid):null;
+  var types=[["birth_boy","👶 Boy Birth"],["birth_girl","👶 Girl Birth"],["engagement","💍 Engagement"],
+             ["wedding","🎊 Wedding"],["custom","✏️ Custom"]];
+  var typeHTML=types.map(function(t){
+    return "<button onclick='ANNOUNCE_STATE.type=\""+t[0]+"\";rebuildAnnounceMsg();renderAnnouncePanel()' "
+      +"style='padding:5px 10px;margin:2px;border-radius:4px;border:none;cursor:pointer;"
+      +(s.type===t[0]?"background:#1a2744;color:white":"background:#e8e8e8;color:#333")+"'>"
+      +t[1]+"</button>";
+  }).join("");
+  var fullMsg=s.msg||"";
+  var msgEncoded=encodeURIComponent(fullMsg);
+  panel.innerHTML="<div style='background:white;border-radius:10px;width:min(520px,96vw);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)'>"
+    +"<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px'>"
+    +"<h3 style='margin:0;color:#1a2744'>📢 Family Announcement</h3>"
+    +"<button onclick='closeAnnounce()' style='background:none;border:none;font-size:20px;cursor:pointer'>✕</button>"
+    +"</div>"
+    +"<div style='margin-bottom:12px'>"+typeHTML+"</div>"
+    +(s.type!=="custom"?"<div style='margin-bottom:10px'><label style='font-size:11px;font-weight:bold;color:#666'>PERSON (optional)</label>"
+    +"<div style='position:relative'>"
+    +"<input class='ffi' placeholder='Search family member...' value='"+(selPerson?esc(selPerson.firstName+" "+selPerson.lastName):(s.search||""))+"' "
+    +"oninput='ANNOUNCE_STATE.search=this.value;ANNOUNCE_STATE.pid=null;renderAnnouncePanel()' style='width:100%;box-sizing:border-box'>"
+    +(searchRes?"<div style='position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;z-index:10;max-height:200px;overflow-y:auto'>"+searchRes+"</div>":"")
+    +"</div></div>":""  )
+    +(s.type==="engagement"||s.type==="wedding"?"<div style='margin-bottom:10px'><label style='font-size:11px;font-weight:bold;color:#666'>OTHER PERSON'S NAME</label>"
+    +"<input class='ffi' placeholder='e.g., Chana Goldberg' value='"+esc(s.p2name||"")+"' "
+    +"oninput='ANNOUNCE_STATE.p2name=this.value;rebuildAnnounceMsg();renderAnnouncePanel()' style='width:100%;box-sizing:border-box'></div>":""  )
+    +"<div style='margin-bottom:10px'><label style='font-size:11px;font-weight:bold;color:#666'>MESSAGE</label>"
+    +"<textarea id='ann-msg' rows='4' style='width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px;border:1px solid #ccc;border-radius:4px' "
+    +"oninput='ANNOUNCE_STATE.msg=this.value'>"+(fullMsg)+"</textarea></div>"
+    +(s.type!=="custom"?"<div style='margin-bottom:12px'><label style='font-size:11px;font-weight:bold;color:#666'>PARTY / EXTRA DETAILS (optional)</label>"
+    +"<input class='ffi' placeholder='e.g., Shalom Zachor Friday night at 123 Main St' value='"+esc(s.extra||"")+"' "
+    +"oninput='ANNOUNCE_STATE.extra=this.value;rebuildAnnounceMsg();renderAnnouncePanel()' style='width:100%;box-sizing:border-box'></div>":""  )
+    +"<div style='display:flex;flex-wrap:wrap;gap:8px'>"
+    +"<button onclick='navigator.clipboard.writeText(document.getElementById(\"ann-msg\").value);toast(\"Copied!\",false)' "
+    +"style='flex:1;min-width:120px;padding:8px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>📋 Copy Group 1</button>"
+    +"<button onclick='navigator.clipboard.writeText(document.getElementById(\"ann-msg\").value);toast(\"Copied!\",false)' "
+    +"style='flex:1;min-width:120px;padding:8px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>📋 Copy Group 2</button>"
+    +"<a href='https://wa.me/?text="+msgEncoded+"' target='_blank' "
+    +"style='flex:1;min-width:120px;padding:8px;background:#25D366;color:white;border-radius:5px;text-decoration:none;text-align:center;cursor:pointer'>📱 WhatsApp</a>"
+    +"<a href='mailto:?body="+msgEncoded+"' "
+    +"style='flex:1;min-width:120px;padding:8px;background:#555;color:white;border-radius:5px;text-decoration:none;text-align:center;cursor:pointer'>📧 Email</a>"
+    +"</div>"
+    +"</div>";
+}
+
+// ── NOTIFICATION QUEUE ────────────────────────────────
+async function showNotify(){
+  NOTIFY_OPEN=true;
+  var panel=document.getElementById("notify-panel");
+  if(!panel){
+    panel=document.createElement("div");
+    panel.id="notify-panel";
+    panel.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:flex-start;justify-content:center;padding-top:30px;box-sizing:border-box;overflow-y:auto";
+    document.body.appendChild(panel);
+  }
+  panel.innerHTML="<div style='background:white;border-radius:10px;width:min(600px,96vw);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)'>"
+    +"<h3 style='color:#1a2744;margin:0 0 10px'>📅 Loading today\u2019s notifications\u2026</h3></div>";
+  // Fetch today + tomorrow Hebrew dates
+  var today=new Date(), tom=new Date(today);
+  tom.setDate(tom.getDate()+1);
+  function fmtDate(d){return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();}
+  var todayHeb=null,tomHeb=null;
+  async function fetchHeb(d,attempt){
+    attempt=attempt||0;
+    try{
+      var r=await fetch("https://www.hebcal.com/converter?cfg=json&date="+fmtDate(d)+"&g2h=1&strict=1",{cache:"no-store"});
+      if(!r.ok)throw new Error("HTTP "+r.status);
+      return await r.json();
+    }catch(e){
+      if(attempt<2){await new Promise(function(res){setTimeout(res,1000*(attempt+1));});return fetchHeb(d,attempt+1);}
+      console.warn("HebCal unavailable:",e.message);
+      return null;
+    }
+  }
+  todayHeb=await fetchHeb(today);
+  tomHeb=await fetchHeb(tom);
+  if(!todayHeb&&!tomHeb){
+    panel.innerHTML="<div style='background:white;border-radius:10px;width:min(600px,96vw);padding:24px;box-shadow:0 8px 32px rgba(0,0,0,.3)'>"
+      +"<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px'>"
+      +"<h3 style='margin:0;color:#1a2744'>📅 Notification Queue</h3>"
+      +"<button onclick='closeNotify()' style='background:none;border:none;font-size:20px;cursor:pointer'>✕</button></div>"
+      +"<div style='background:#fff3cd;border:1px solid #ffc107;border-radius:6px;padding:12px;margin-bottom:14px'>"
+      +"⚠️ <strong>Can't reach HebCal</strong> — Hebrew date lookup failed.<br>"
+      +"<small>This usually means the app is running as a local file. "
+      +"Host it on Firebase Hosting or GitHub Pages for full functionality.</small></div>"
+      +"<button onclick='closeNotify()' style='padding:8px 20px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>Close</button>"
+      +"</div>";
+    return;
+  }
+  renderNotifyPanel(today,tom,todayHeb,tomHeb);
+}
+function closeNotify(){
+  NOTIFY_OPEN=false;
+  var p=document.getElementById("notify-panel");
+  if(p)p.remove();
+}
+
+function fmtEventDate(person, recipient, engDate){
+  // Format event date based on RECIPIENT's date preference
+  var pref=(recipient&&recipient.datePref)||"english";
+  var heb=person.hebDay&&person.hebMonth?(person.hebDay+" "+person.hebMonth):null;
+  var eng=engDate||(person.dob?new Date(person.dob+"T12:00:00").toLocaleDateString("en-US",{month:"long",day:"numeric"}):null);
+  if(pref==="hebrew"&&heb)return heb;
+  if(pref==="both"&&heb&&eng)return heb+" / "+eng;
+  if(pref==="both"&&heb)return heb;
+  return eng||heb||"";
+}
+function renderNotifyPanel(today,tom,todayHeb,tomHeb){
+  var panel=document.getElementById("notify-panel");
+  if(!panel)return;
+  var entries=[];
+  var todayM=today.getMonth()+1, todayD=today.getDate();
+  var tomM=tom.getMonth()+1, tomD=tom.getDate();
+  P.forEach(function(p){
+    // Hebrew birthday tomorrow → notify parents/grandparents today
+    if(tomHeb&&p.hebMonth&&p.hebDay&&p.hebMonth===tomHeb.hm&&+p.hebDay===tomHeb.hd){
+      entries.push({event:"birthday",person:p,forTomorrow:true,dateStr:p.hebDay+" "+p.hebMonth});
+    }
+    // Hebrew birthday today → notify person themselves
+    if(todayHeb&&p.hebMonth&&p.hebDay&&p.hebMonth===todayHeb.hm&&+p.hebDay===todayHeb.hd){
+      entries.push({event:"birthday",person:p,forTomorrow:false,dateStr:p.hebDay+" "+p.hebMonth});
+    }
+    // English birthday tomorrow → notify parents
+    if(p.dob){var bm=+p.dob.split("-")[1],bd=+p.dob.split("-")[2];
+      if(bm===tomM&&bd===tomD)entries.push({event:"birthday_eng",person:p,forTomorrow:true,dateStr:["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][tomM-1]+" "+tomD});
+    }
+    // Hebrew anniversary tomorrow → notify couple
+    if(p.gender==="Male"&&p.spouseId&&tomHeb&&p.annMonth&&p.annDay&&p.annMonth===tomHeb.hm&&+p.annDay===tomHeb.hd){
+      entries.push({event:"anniversary",person:p,forTomorrow:true,dateStr:p.annDay+" "+p.annMonth});
+    }
+    // Hebrew anniversary today → notify couple
+    if(p.gender==="Male"&&p.spouseId&&todayHeb&&p.annMonth&&p.annDay&&p.annMonth===todayHeb.hm&&+p.annDay===todayHeb.hd){
+      entries.push({event:"anniversary",person:p,forTomorrow:false,dateStr:p.annDay+" "+p.annMonth});
+    }
+  });
+
+  function buildSendBtn(recipient,msg){
+    if(!hasSendInfo(recipient))return "";
+    var href=sendLink(recipient,msg);
+    var icon=channelIcon(recipient);
+    var name=casualFirst(recipient);
+    if(href.startsWith("sms:")||href.startsWith("https:")||href.startsWith("mailto:")){
+      return "<a href='"+href+"' target='_blank' style='display:inline-block;margin:2px;padding:4px 10px;background:#1a2744;color:white;border-radius:4px;text-decoration:none;font-size:12px'>"+icon+" "+esc(name)+"</a>";
+    }
+    return "";
+  }
+
+  function buildEntry(e){
+    var p=e.person;
+    var sp=p.spouseId?P.find(x=>x.id===p.spouseId):null;
+    var par=personParents(p);
+    var gps=personGrandparents(p);
+    var pname=casualFirst(p);
+    var html2="<div style='border:1px solid #e0ddd0;border-radius:8px;padding:12px;margin-bottom:10px;background:#fffef8'>";
+
+    if(e.event==="birthday"||e.event==="birthday_eng"){
+      var label=e.forTomorrow?"Tomorrow ("+e.dateStr+")":"Today ("+e.dateStr+")";
+      html2+="<div style='font-weight:bold;color:#1a2744;margin-bottom:6px'>🎂 "+esc(pname)+"&rsquo;s Birthday &mdash; "+label+"</div>";
+      if(e.forTomorrow){
+        // Messages to parents
+        // Use each parent's date preference for their message
+        var ptxt="Happy Birthday to your "+(p.gender==="Female"?"daughter":"son")+" "+pname+"! \uD83C\uDF82 Wishing "+(p.gender==="Female"?"her":"him")+" a wonderful day!";
+        html2+="<div style='font-size:12px;color:#666;margin-bottom:4px'>To parents:</div>";
+        if(par.dad){var dd=fmtEventDate(p,par.dad,null);html2+=buildSendBtn(par.dad,dd?"Happy Birthday to your "+(p.gender==="Female"?"daughter":"son")+" "+pname+"! ("+dd+") \uD83C\uDF82 Wishing "+(p.gender==="Female"?"her":"him")+" a wonderful day!":ptxt);}
+        if(par.mom){var dm=fmtEventDate(p,par.mom,null);html2+=buildSendBtn(par.mom,dm?"Happy Birthday to your "+(p.gender==="Female"?"daughter":"son")+" "+pname+"! ("+dm+") \uD83C\uDF82 Wishing "+(p.gender==="Female"?"her":"him")+" a wonderful day!":ptxt);}
+        if(!par.dad&&!par.mom)html2+="<span style='color:#aaa;font-size:12px'>No parent contact info</span>";
+        // Grandparents
+        var gpMsg="Happy Birthday to your grandchild "+pname+"! \uD83C\uDF82";
+        if(gps.length){
+          html2+="<div style='font-size:12px;color:#666;margin:4px 0 2px'>To grandparents:</div>";
+          gps.forEach(function(gp){
+            if(gp.dad)html2+=buildSendBtn(gp.dad,gpMsg);
+            if(gp.mom)html2+=buildSendBtn(gp.mom,gpMsg);
+          });
+        }
+        // Siblings (optional)
+        var sibs=P.filter(function(x){return x.id!==p.id&&x.fatherId&&x.fatherId===p.fatherId&&!x.deceased&&!x.yartzheit;});
+        if(sibs.length){
+          var sibMsg="Happy Birthday to your "+(p.gender==="Female"?"sister":"brother")+" "+pname+"! \uD83C\uDF82";
+          var sibBtns=sibs.filter(hasSendInfo).map(function(s2){return buildSendBtn(s2,sibMsg);}).join("");
+          if(sibBtns){
+            html2+="<div style='font-size:12px;color:#666;margin:4px 0 2px'>To siblings (optional):</div>"+sibBtns;
+          }
+        }
+      } else {
+        // Send to person themselves
+        var selfDateStr=fmtEventDate(p,p,null);var selfMsg="Happy Birthday "+pname+"!"+(selfDateStr?" ("+selfDateStr+")":"")+" \uD83C\uDF82 Wishing you a wonderful day!";
+        html2+="<div style='font-size:12px;color:#666;margin-bottom:4px'>To "+esc(pname)+":</div>";
+        html2+=hasSendInfo(p)?buildSendBtn(p,selfMsg):"<span style='color:#aaa;font-size:12px'>No contact info for "+esc(pname)+"</span>";
+      }
+    } else if(e.event==="anniversary"){
+      var wife=sp;
+      var label2=e.forTomorrow?"Tomorrow ("+e.dateStr+")":"Today ("+e.dateStr+")";
+      var pairName=casualFirst(p)+(wife?" & "+casualFirst(wife):"");
+      html2+="<div style='font-weight:bold;color:#1a2744;margin-bottom:6px'>💍 "+esc(pairName)+"&rsquo;s Anniversary &mdash; "+label2+"</div>";
+      var annDateH=p.annDay&&p.annMonth?(p.annDay+" "+p.annMonth):null;
+      var annMsg=e.forTomorrow
+        ? "Wishing "+esc(pairName)+" a Happy Anniversary!"+(annDateH?" ("+annDateH+")":"")+" \uD83D\uDC8D May you share many more wonderful years!"
+        : "Happy Anniversary "+esc(pairName)+"!"+(annDateH?" ("+annDateH+")":"")+" \uD83D\uDC8D Wishing you a beautiful day!";
+      html2+="<div style='font-size:12px;color:#666;margin-bottom:4px'>To the couple:</div>";
+      html2+=buildSendBtn(p,annMsg);
+      if(wife)html2+=buildSendBtn(wife,annMsg);
+      // Parents
+      var annParMsg="Happy Anniversary to "+esc(pairName)+"! \uD83D\uDC8D";
+      if(par.dad||par.mom){
+        html2+="<div style='font-size:12px;color:#666;margin:4px 0 2px'>To parents:</div>";
+        if(par.dad)html2+=buildSendBtn(par.dad,annParMsg);
+        if(par.mom)html2+=buildSendBtn(par.mom,annParMsg);
+      }
+    }
+    html2+="</div>";
+    return html2;
+  }
+
+  var todayStr=today.toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric"});
+  var hebStr=todayHeb?(todayHeb.hd+" "+todayHeb.hm+" "+todayHeb.hy):"";
+  var tomStr=tom.toLocaleDateString("en-US",{month:"long",day:"numeric"});
+  var tomHebStr=tomHeb?(tomHeb.hd+" "+tomHeb.hm):"";
+  var body="<div style='background:white;border-radius:10px;width:min(600px,96vw);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.3);max-height:85vh;overflow-y:auto'>"
+    +"<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:4px'>"
+    +"<h3 style='margin:0;color:#1a2744'>📅 Notification Queue</h3>"
+    +"<button onclick='closeNotify()' style='background:none;border:none;font-size:20px;cursor:pointer'>✕</button></div>"
+    +"<div style='font-size:12px;color:#888;margin-bottom:14px'>Today: "+todayStr+(hebStr?" / "+hebStr:"")
+    +"<br>Checking Hebrew birthdays/anniversaries for tomorrow ("+tomStr+(tomHebStr?" / "+tomHebStr:"")+")</div>";
+  if(entries.length===0){
+    body+="<div style='text-align:center;padding:30px;color:#888'>No notifications for today or tomorrow 🎉</div>";
+  } else {
+    entries.forEach(function(e){body+=buildEntry(e);});
+  }
+  body+="</div>";
+  panel.innerHTML=body;
+}
+
+(async function init(){
+  var ok=initFirebase();
+  var loaded=false;
+  // 10s timeout prevents indefinite hang on slow mobile networks
+  var timeout=new Promise(function(r){setTimeout(function(){r(false);},10000);});
+  if(ok)loaded=await Promise.race([loadFromCloud(),timeout]);
+  if(!loaded){
+    var migrated=await migrateFromLocalStorage();
+    if(!migrated){P=[];NID=INIT_NID;}
+    if(!migrated)setSyncStatus("offline");
+  }
+  if(ok)startRealtimeSync();
+  setSyncStatus(P.length?"synced":"");
+  // Silent background fix: re-fetch hebMonth for records that have hebDate but not hebMonth
+  setTimeout(async function(){
+    var fixed=0;
+    for(var i=0;i<P.length;i++){
+      var p=P[i];
+      if(p.dob&&p.hebDate&&!p.hebMonth){
+        try{
+          var h=await fH(p.dob,p.sunset);
+          if(h&&h.hm){
+            P[i]=Object.assign({},p,{hebMonth:h.hm,hebMonthNum:h.monthNum,hebDay:h.hd,hebYear:h.hy});
+            fixed++;
+          }
+        }catch(e){}
+      }
+    }
+    if(fixed>0){scheduleSave();console.log("Fixed hebMonth for "+fixed+" records");}
+  },3000);
+  render();
+})();
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</script>
+</body>
+</html>
