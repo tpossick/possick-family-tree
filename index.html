@@ -154,6 +154,7 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -195,8 +196,7 @@ function setSyncStatus(s){
     var h=t.getHours()%12||12,m=('0'+t.getMinutes()).slice(-2),ap=t.getHours()<12?'am':'pm';
     syncLabel=" · <span style='color:#8f8'>synced "+h+":"+m+ap+"</span>";
   } else if(s==="synced")syncLabel=" · <span style='color:#8f8'>synced</span>";
-  var desc=P.filter(function(p){return p.generation>=1;}).length;
-  el.innerHTML=desc+" desc · "+base+" blood"+syncLabel;
+  el.innerHTML=P.length+" people · "+base+" blood"+syncLabel;
 }
 
 function initFirebase(){
@@ -796,9 +796,68 @@ function rptMonthly(){
 }
 
 // COUNTS
-function rptCounts(){const desc=P.filter(p=>p.generation>=1);const blood=desc.filter(p=>p.blood);const gens=[1,2,3,4].map(g=>{const gp=desc.filter(p=>p.generation===g);const bl=gp.filter(p=>p.blood);return{g,name:GN[g],tot:gp.length,bl:bl.length,mi:gp.length-bl.length,boys:bl.filter(p=>p.gender==="Male").length,girls:bl.filter(p=>p.gender==="Female").length};}).filter(x=>x.tot>0);const cards=[["Total Descendants",desc.length],["Blood Relatives",blood.length],["Married In",desc.length-blood.length],["Blood Grandchildren+",blood.filter(p=>p.generation>=2).length]].map(([l,v])=>"<div class='cc'><div class='cn'>"+v+"</div><div class='cl'>"+l+"</div></div>").join("");const rows=gens.map(g=>"<tr style='background:"+(g.g%2?"#f7f4ec":"white")+"'><td>"+mks(g.g)+" "+g.name+"</td><td style='text-align:center'><strong>"+g.tot+"</strong></td><td style='text-align:center'>"+g.bl+"</td><td style='text-align:center'>"+g.mi+"</td><td style='text-align:center'>"+g.boys+"</td><td style='text-align:center'>"+g.girls+"</td></tr>").join("");return"<div class='rtit'>Possick Family Counts</div><p style='text-align:center;font-size:11px;color:#888;margin-bottom:8px'>Abba &amp; Mummy not counted</p><div class='cg'>"+cards+"</div><table style='width:100%;border-collapse:collapse;margin-top:16px;font-size:12px'><thead><tr>"+["Generation","Total","Blood","Married In","Boys","Girls"].map(h=>"<th style='background:var(--navy);color:white;padding:6px 10px;text-align:center'>"+h+"</th>").join("")+"</tr></thead><tbody>"+rows+"</tbody></table>"+rptFooter();}
+function rptCounts(){
+  // Include ALL people (gen 0 = Abba & Mummy through gen 4+)
+  const allP=P.slice();
+  const blood=allP.filter(p=>p.blood);
+  const GN_LABELS=["Abba & Mummy","Children","Grandchildren","Great-Grandchildren","Gt-Gt-Grandchildren"];
+  // Build generation rows for gen 0 through max gen found
+  var maxGen=0;
+  allP.forEach(function(p){if(p.generation>maxGen)maxGen=p.generation;});
+  const gens=[];
+  for(var g=0;g<=maxGen;g++){
+    const gp=allP.filter(function(p){return p.generation===g;});
+    if(!gp.length)continue;
+    const bl=gp.filter(function(p){return p.blood;});
+    gens.push({
+      g:g,
+      name:GN_LABELS[g]||("Generation "+g),
+      tot:gp.length,
+      bl:bl.length,
+      mi:gp.length-bl.length,
+      boys:gp.filter(function(p){return p.gender==="Male";}).length,
+      girls:gp.filter(function(p){return p.gender==="Female";}).length
+    });
+  }
+  // Summary cards
+  const cards=[
+    ["Total in Family",allP.length],
+    ["Blood Relatives",blood.length],
+    ["Married In",allP.length-blood.length],
+    ["Married Grandchildren",allP.filter(function(p){return p.generation===2&&p.blood&&p.spouseId&&P.find(function(s){return +s.id===+p.spouseId;});}).length]
+  ].map(function(kv){
+    return "<div class='cc'><div class='cn'>"+kv[1]+"</div><div class='cl'>"+kv[0]+"</div></div>";
+  }).join("");
+  const rows=gens.map(function(g){
+    return "<tr style='background:"+(g.g%2?"#f7f4ec":"white")+"'>"
+      +"<td>"+mks(g.g)+" "+g.name+"</td>"
+      +"<td style='text-align:center'><strong>"+g.tot+"</strong></td>"
+      +"<td style='text-align:center'>"+g.bl+"</td>"
+      +"<td style='text-align:center'>"+g.mi+"</td>"
+      +"<td style='text-align:center'>"+g.boys+"</td>"
+      +"<td style='text-align:center'>"+g.girls+"</td>"
+      +"</tr>";
+  }).join("");
+  return "<div class='rtit'>Possick Family Counts</div>"
+    +"<div class='cg'>"+cards+"</div>"
+    +"<table style='width:100%;border-collapse:collapse;margin-top:16px;font-size:12px'>"
+    +"<thead><tr>"
+    +["Generation","Total","Blood","Married In","Boys","Girls"].map(function(h){
+      return "<th style='background:var(--navy);color:white;padding:6px 10px;text-align:center'>"+h+"</th>";
+    }).join("")
+    +"</tr></thead><tbody>"+rows+"</tbody>"
+    +"<tfoot><tr style='background:#e8e4dc;font-weight:bold'>"
+    +"<td>Total</td>"
+    +"<td style='text-align:center'>"+allP.length+"</td>"
+    +"<td style='text-align:center'>"+blood.length+"</td>"
+    +"<td style='text-align:center'>"+(allP.length-blood.length)+"</td>"
+    +"<td style='text-align:center'>"+allP.filter(function(p){return p.gender==="Male";}).length+"</td>"
+    +"<td style='text-align:center'>"+allP.filter(function(p){return p.gender==="Female";}).length+"</td>"
+    +"</tr></tfoot></table>"
+    +"<p style='font-size:10px;color:#aaa;margin-top:8px;text-align:center'>"
+    +"Boys/Girls counts include all (blood + married-in). Married Grandchildren = blood gen-2 with verified spouse.</p>";
+}
 
-// HANDLERS
 function gv(v){VIEW=v;SOPEN=null;if(v==="add"){FORM=blank();FP=null;ADDSPOUSEFOR=null;}render();}
 function editP(id){const p=P.find(x=>x.id===id);if(!p)return;FORM=Object.assign({},p);VIEW="edit";EDITID=id;SOPEN=null;FP=null;ADDSPOUSEFOR=null;render();document.getElementById("main").scrollTop=0;}
 function addChild(parentId){const parent=P.find(p=>p.id===parentId);if(!parent)return;const spouse=parent.spouseId?P.find(p=>p.id===parent.spouseId):null;const f=blank();if(parent.gender==="Male"){f.fatherId=parent.id;if(spouse)f.motherId=spouse.id;}else{f.motherId=parent.id;if(spouse)f.fatherId=spouse.id;}const dad=P.find(p=>p.id===f.fatherId),mom=P.find(p=>p.id===f.motherId);const bp=dad&&dad.blood?dad:mom&&mom.blood?mom:null;if(bp){f.code=nc(bp.code,"Male",P);f.familyGroup=gFam(bp.code);f.generation=gG(bp.code)+1;f.parentsName=dad&&mom?dad.firstName+" & "+mom.firstName:dad?dad.firstName:mom?mom.firstName:"";}f.lastName=(dad||{}).lastName||(mom||{}).lastName||"";FORM=f;EDITID=null;VIEW="add";FP="Adding child for "+parent.firstName+" "+parent.lastName+(spouse?" & "+spouse.firstName+" "+spouse.lastName:"");render();document.getElementById("main").scrollTop=0;}
@@ -2044,6 +2103,7 @@ function parseDate(val){
     render();
   });
 })();
+
 
 
 
