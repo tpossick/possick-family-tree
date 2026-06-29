@@ -155,6 +155,9 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
+
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -570,7 +573,7 @@ function renderForm(){
 
 // mkt/mks need to be in JS scope
 function renderReports(){
-  const tabs=[["tehillim","Tehillim"],["birthday","Birthday/Ann"],["monthly","Monthly"],["counts","Counts"],["query","Query"]];
+  const tabs=[["tehillim","Tehillim"],["birthday","Birthday/Ann"],["monthly","Monthly"],["counts","Counts"],["query","Query"],["contacts","Contacts"]];
   const th=tabs.map(([v,l])=>"<div class='rtab"+(RTAB===v?" active":"")+"' onclick=\"RTAB='"+v+"';render()\">"+l+"</div>").join("");
   const fo=FAM.slice(1,9).map(f=>"<option value='"+f.n+"'"+(RPT_FAM===f.n?" selected":"")+">"+esc(f.full.replace(" & Family",""))+"</option>").join("");
   const showOpts=RTAB==="birthday"||RTAB==="monthly";
@@ -580,6 +583,7 @@ function renderReports(){
   else if(RTAB==="birthday")body=rptBirthday();
   else if(RTAB==="monthly")body=rptMonthly();
   else if(RTAB==="query")body=rptQuery();
+  else if(RTAB==="contacts")body=rptContacts();
   else body=rptCounts();
   return"<div class='rtabs'>"+th+"</div>"+ctl+"<div class='panel'><div class='rb2'>"+body+"</div></div>";
 }
@@ -2072,6 +2076,79 @@ function parseDate(val){
   return null;
 }
 
+var CONTACT_DATA=[{"code":"00.00.00.b","email":"moshepossick@gmail.com","phone":"8483332936","channel":"email"},{"code":"00.00.00.g","email":"","phone":"7322327313","channel":""},{"code":"01.00.00.b","email":"rshapiro@baisyaakov.net","phone":"4107460786","channel":"email"},{"code":"01.00.00.g","email":"","phone":"4107463506","channel":""},{"code":"01.01.00.b","email":"zntshapiro@gmail.com","phone":"","channel":""},{"code":"01.01.00.g","email":"","phone":"9737158434","channel":""},{"code":"01.02.00.b","email":"millerchaim1@gmail.com","phone":"8452639390","channel":""},{"code":"01.02.00.g","email":"","phone":"4104565495","channel":""},{"code":"01.03.00.b","email":"ydshaps@gmail.com","phone":"7325018232","channel":"whatsapp"},{"code":"01.03.00.g","email":"brachiew@gmail.com","phone":"7187724140","channel":"whatsapp"},{"code":"01.04.00.b","email":"yaakovshaps@gmail.com","phone":"4434150488","channel":"email"},{"code":"01.04.00.g","email":"sarhech@aol.com","phone":"3474391476","channel":""},{"code":"01.05.00.b","email":"","phone":"7326645191","channel":""},{"code":"01.05.00.g","email":"shapiroe1@gmail.com","phone":"4107462903","channel":""},{"code":"01.06.00.b","email":"","phone":"8455874391","channel":""},{"code":"01.06.00.g","email":"brochafeld2012@gmail.com","phone":"8455874227","channel":""},{"code":"01.07.00.g","email":"sshap18@gmail.com","phone":"","channel":"email"},{"code":"01.08.00.b","email":"","phone":"4435373593","channel":"whatsapp"},{"code":"01.09.00.g","email":"miriamshaps18@gmail.com","phone":"4436803652","channel":"whatsapp"},{"code":"01.10.00.g","email":"eshaps@gmail.com","phone":"4109168504","channel":""},{"code":"01.11.00.b","email":"","phone":"8454999778","channel":""},{"code":"01.11.00.g","email":"hudishaps518@gmail.com","phone":"4434471969","channel":""},{"code":"01.12.00.b","email":"","phone":"6674649689","channel":""},{"code":"02.00.00.g","email":"br@zrusa.com","phone":"7325978238","channel":"email"},{"code":"02.01.00.b","email":"ybk@npgsusa.com","phone":"7327791892","channel":""},{"code":"02.01.00.g","email":"soroh@npgsusa.com","phone":"8482104177","channel":""},{"code":"02.01.01.g","email":"","phone":"7326911413","channel":""},{"code":"02.02.00.b","email":"","phone":"9178649144","channel":""},{"code":"02.02.00.g","email":"yehudislevy@gmail.com","phone":"3476287763","channel":"email"},{"code":"02.04.00.g","email":"rlonner@gmail.com","phone":"","channel":"email"},{"code":"02.05.00.g","email":"kaylakirzner@gmail.com","phone":"","channel":""},{"code":"02.06.00.b","email":"tanchumshevy@gmail.com","phone":"","channel":""},{"code":"02.07.00.b","email":"","phone":"7327030800","channel":""},{"code":"02.07.00.g","email":"","phone":"8482405907","channel":""},{"code":"02.08.00.b","email":"rothschild518@gmail.com","phone":"","channel":"email"},{"code":"02.09.00.b","email":"mordy@mrst.co","phone":"8483738500","channel":"whatsapp"},{"code":"02.09.00.g","email":"michalrothschild50@gmail.com","phone":"9089101563","channel":"whatsapp"},{"code":"02.10.00.g","email":"9998570@gmail.com","phone":"","channel":""},{"code":"02.11.00.g","email":"chanabeer2772@gmail.com","phone":"","channel":""},{"code":"02.12.00.b","email":"","phone":"7323950430","channel":""},{"code":"02.13.00.b","email":"","phone":"7325755301","channel":""},{"code":"03.00.00.b","email":"yehudapossick@gmail.com","phone":"8458266357","channel":"email"},{"code":"03.00.00.g","email":"","phone":"8458252007","channel":"whatsapp"},{"code":"03.01.00.b","email":"egpossick@gmail.com","phone":"8456086762","channel":"whatsapp"},{"code":"03.01.00.g","email":"rivkyrovner@gmail.com","phone":"3477860845","channel":"whatsapp"},{"code":"03.02.00.b","email":"zevpossick@gmail.com","phone":"8456426722","channel":"email"},{"code":"03.02.00.g","email":"rikkipossick@gmail.com","phone":"2487962149","channel":"whatsapp"},{"code":"03.03.00.b","email":"","phone":"3479099724","channel":""},{"code":"03.03.00.g","email":"","phone":"8454993314","channel":""},{"code":"03.04.00.b","email":"","phone":"8482407123","channel":""},{"code":"03.04.00.g","email":"miriampossick@gmail.com","phone":"8454996346","channel":""},{"code":"03.05.00.b","email":"","phone":"7326747125","channel":""},{"code":"03.05.00.g","email":"sorapossick@gmail.com","phone":"8454227684","channel":"whatsapp"},{"code":"03.06.00.b","email":"akivaspilman@gmail.com","phone":"7327371566","channel":""},{"code":"03.06.00.g","email":"bpossick@gmail.com","phone":"8455871406","channel":""},{"code":"03.07.00.g","email":"tziporapossick@gmail.com","phone":"8454990230","channel":""},{"code":"03.08.00.b","email":"","phone":"8455870581","channel":""},{"code":"04.00.00.b","email":"hpossick@gmail.com","phone":"4103581741","channel":"whatsapp"},{"code":"04.00.00.g","email":"ympossick@gmail.com","phone":"4103583072","channel":"email"},{"code":"04.01.00.b","email":"dovzuck@yahoo.com","phone":"7329662431","channel":"email"},{"code":"04.01.00.g","email":"estyzuck@gmail.com","phone":"4434164907","channel":"email"},{"code":"04.02.00.b","email":"chevypossick@gmail.com","phone":"7182237988","channel":"email"},{"code":"04.02.00.g","email":"","phone":"4108499164","channel":""},{"code":"04.03.00.b","email":"yypossick@gmail.com","phone":"4109635484","channel":"whatsapp"},{"code":"04.03.00.g","email":"debzstef@gmail.com","phone":"8455986760","channel":"whatsapp"},{"code":"04.04.00.b","email":"","phone":"7326489780","channel":""},{"code":"04.04.00.g","email":"denabee11@gmail.com","phone":"5743830691","channel":""},{"code":"04.05.00.b","email":"","phone":"4104995809","channel":"whatsapp"},{"code":"05.00.00.b","email":"yosymunk@gmail.com","phone":"7324473007","channel":"email"},{"code":"05.00.00.g","email":"","phone":"7325972594","channel":""},{"code":"05.01.00.b","email":"","phone":"7325692778","channel":""},{"code":"05.02.00.b","email":"","phone":"8483735864","channel":""},{"code":"05.02.00.g","email":"gittelmunk@gmail.com","phone":"7325692821","channel":"email"},{"code":"05.03.00.b","email":"dovidm18@gmail.com","phone":"7327490176","channel":"whatsapp"},{"code":"05.03.00.g","email":"miriamsafer@gmail.com","phone":"3479710552","channel":"whatsapp"},{"code":"05.04.00.b","email":"shimonzevmunk@gmail.com","phone":"7329980145","channel":"whatsapp"},{"code":"05.04.00.g","email":"","phone":"7186374134","channel":"whatsapp"},{"code":"05.05.00.b","email":"reuven22t@gmail.com","phone":"7185103765","channel":""},{"code":"05.05.00.g","email":"munkyehudis@gmail.com","phone":"8482245693","channel":"whatsapp"},{"code":"05.06.00.b","email":"","phone":"9739318855","channel":""},{"code":"05.06.00.g","email":"sorahuvamunk@gmail.com","phone":"8482405423","channel":"whatsapp"},{"code":"05.07.00.b","email":"","phone":"8482406083","channel":"whatsapp"},{"code":"05.07.00.g","email":"munkchumi@gmail.com","phone":"8482104999","channel":""},{"code":"05.08.00.g","email":"","phone":"7322672422","channel":""},{"code":"06.00.00.b","email":"aromirr@aol.com","phone":"9177551956","channel":"whatsapp"},{"code":"06.01.00.b","email":"srulir01@gmail.com","phone":"","channel":""},{"code":"06.01.00.g","email":"chanig95@gmail.com","phone":"9176027677","channel":"whatsapp"},{"code":"06.02.00.g","email":"","phone":"7189091975","channel":""},{"code":"06.03.00.b","email":"yoniandadina@gmail.com","phone":"7189544361","channel":""},{"code":"06.03.00.g","email":"adinar39@gmail.com","phone":"3472669440","channel":"whatsapp"},{"code":"06.04.00.b","email":"shueyrosenberg@gmail.com","phone":"9174283989","channel":""},{"code":"06.04.00.g","email":"chevedrosenberg@gmail.com","phone":"7326749790","channel":""},{"code":"06.05.00.b","email":"","phone":"5165328639","channel":"whatsapp"},{"code":"06.06.00.g","email":"ahuvarosenberg39@gmail.com","phone":"3474435392","channel":"whatsapp"},{"code":"06.07.00.g","email":"rosenberghudi@gmail.com","phone":"7189167939","channel":""},{"code":"06.09.00.b","email":"","phone":"3476733821","channel":""},{"code":"07.00.00.b","email":"possickad@gmail.com","phone":"7187876163","channel":"email"},{"code":"07.00.00.g","email":"mindypossick@gmail.com","phone":"9174062767","channel":""},{"code":"07.01.00.b","email":"","phone":"8455874418","channel":""},{"code":"07.01.00.g","email":"chayawise123@gmail.com","phone":"3474157155","channel":""},{"code":"07.02.00.b","email":"zevnpossick@gmail.com","phone":"","channel":"email"},{"code":"07.02.00.g","email":"chayaerichter@gmail.com","phone":"9293883088","channel":"email"},{"code":"07.03.00.b","email":"","phone":"8455872961","channel":""},{"code":"07.03.00.g","email":"gayilpossick@gmail.com","phone":"3474616927","channel":""},{"code":"07.04.00.b","email":"","phone":"8452137421","channel":""},{"code":"07.05.00.b","email":"boruchkemplerey@gmail.com","phone":"","channel":""},{"code":"07.05.00.g","email":"miripossick@gmail.com","phone":"","channel":""},{"code":"08.00.00.b","email":"nachmang@optonline.net","phone":"7322322321","channel":"whatsapp"},{"code":"08.00.00.g","email":"morahnechama@icloud.com","phone":"7325802099","channel":""},{"code":"08.01.00.b","email":"yehudagreenwald5755@gmail.com","phone":"7322282538","channel":""},{"code":"08.01.00.g","email":"","phone":"2248019435","channel":""},{"code":"08.02.00.g","email":"dgreenwald6146@gmail.com","phone":"7329660594","channel":"email"},{"code":"08.03.00.b","email":"myscenicpix@gmail.com","phone":"","channel":""},{"code":"08.03.00.g","email":"greenwaldbrocha@gmail.com","phone":"7322280695","channel":"whatsapp"},{"code":"08.04.00.g","email":"soragreenwald@gmail.com","phone":"7326642008","channel":""},{"code":"08.05.00.g","email":"greenwaldchani1@gmail.com","phone":"8482997729","channel":"email"},{"code":"08.07.00.g","email":"greenwaldleah1@gmail.com","phone":"7329661368","channel":""}];
+
+function importContacts(overwrite){
+  var matched=0,updated=0;
+  P=P.map(function(p){
+    var rec=CONTACT_DATA.find(function(c){return c.code===p.code;});
+    if(!rec)return p;
+    matched++;
+    var upd={};
+    if(rec.email&&(overwrite||!p.email)){upd.email=rec.email;updated++;}
+    if(rec.phone&&(overwrite||!p.phone)){upd.phone=rec.phone;updated++;}
+    if(rec.channel&&(overwrite||!p.contactChannel)){upd.contactChannel=rec.channel;updated++;}
+    return Object.assign({},p,upd);
+  });
+  scheduleSave();render();
+  toast("Matched "+matched+" people, updated "+updated+" fields",false);
+}
+
+var CONTACT_GN=["Parents","Children","Grandchildren","Great-Grandchildren","Gt-Gt-Grandchildren"];
+
+function rptContacts(sortBy){
+  sortBy=sortBy||"name";
+  var people=P.filter(function(p){
+    if(p.generation<1)return true;
+    if(!p.dob)return true;
+    var age=new Date().getFullYear()-new Date(p.dob+"T12:00:00").getFullYear();
+    return age>=18;
+  });
+  if(sortBy==="channel"){
+    people=people.slice().sort(function(a,b){
+      var ca=a.contactChannel||"zzz",cb=b.contactChannel||"zzz";
+      return ca!==cb?ca.localeCompare(cb):(a.firstName||"").localeCompare(b.firstName||"");
+    });
+  } else {
+    people=people.slice().sort(function(a,b){
+      return ((a.firstName||"")+" "+(a.lastName||"")).localeCompare((b.firstName||"")+" "+(b.lastName||""));
+    });
+  }
+  var noContact=people.filter(function(p){return !p.phone&&!p.email;});
+  function chIcon(c){return c==="whatsapp"?"WhatsApp":c==="email"?"Email":c==="text"?"Text":"—";}
+  var hdr=["Name","Email","Phone","Preferred","Generation"].map(function(h){
+    return "<th style=\"background:var(--navy);color:white;padding:6px 8px;text-align:left\">"+h+"</th>";
+  }).join("");
+  var rows=people.map(function(p){
+    var bg=(!p.phone&&!p.email)?"background:#fff0f0":"";
+    return "<tr style=\""+bg+"\">"
+      +"<td style=\"padding:4px 8px\">"+esc(p.firstName+" "+p.lastName)+"</td>"
+      +"<td style=\"padding:4px 8px;font-size:11px\">"+esc(p.email||"—")+"</td>"
+      +"<td style=\"padding:4px 8px\">"+esc(p.phone||"—")+"</td>"
+      +"<td style=\"padding:4px 8px\">"+chIcon(p.contactChannel||"")+"</td>"
+      +"<td style=\"padding:4px 8px;color:#888;font-size:11px\">"+esc(CONTACT_GN[p.generation]||"")+"</td>"
+      +"</tr>";
+  }).join("");
+  var warn=noContact.length
+    ?"<div style=\"background:#fff3cd;padding:8px 12px;border-radius:5px;margin-bottom:10px;font-size:12px\">"+
+      "&#9888; <strong>"+noContact.length+" adults have no contact info</strong> (shown in red)</div>":"";
+  return "<div class=\"rtit\">Contact Directory</div>"
+    +"<div style=\"display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap\">"
+    +"<button class=\"btn n sm\" onclick=\"rptShowContacts('name')\">Sort by Name</button>"
+    +"<button class=\"btn n sm\" onclick=\"rptShowContacts('channel')\">Sort by Channel</button>"
+    +"<button class=\"btn p sm\" onclick=\"importContacts(false)\">&#128229; Import Spreadsheet</button>"
+    +"<button class=\"btn n sm\" onclick=\"if(confirm('Overwrite existing?'))importContacts(true)\">&#128260; Re-import</button>"
+    +"<button class=\"btn n sm\" style=\"margin-left:auto\" onclick=\"window.print()\">&#128424; Print</button>"
+    +"</div>"+warn
+    +"<table style=\"width:100%;border-collapse:collapse;font-size:12px\">"
+    +"<thead><tr>"+hdr+"</tr></thead><tbody>"+rows+"</tbody></table>";
+}
+
+function rptShowContacts(sortBy){
+  var m=document.getElementById("main");
+  if(m){m.innerHTML=rptContacts(sortBy);RTAB="contacts";}
+}
+
 (function startApp(){
   var ok=initFirebase();
   if(!ok){render();return;}
@@ -2103,6 +2180,9 @@ function parseDate(val){
     render();
   });
 })();
+
+
+
 
 
 
