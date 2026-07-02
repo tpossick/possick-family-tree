@@ -168,6 +168,7 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -883,7 +884,7 @@ if(cp){
   f.familyGroup=gFam(cp.code)||(dad?dad.familyGroup:0)||(mom?mom.familyGroup:0)||0;
   f.generation=gG(cp.code)+1;
 }
-f.parentsName=dad&&mom?dad.firstName+" & "+mom.firstName:dad?dad.firstName:mom?mom.firstName:"";
+f.parentsName=""; // left blank — user fills in if needed for disambiguation
 f.lastName=(dad&&dad.lastName?dad.lastName:mom&&mom.lastName?mom.lastName:"");
 // Child is blood if either parent is blood
 f.blood=!!(dad&&dad.blood||mom&&mom.blood);FORM=f;EDITID=null;VIEW="add";FP="Adding child for "+parent.firstName+" "+parent.lastName+(spouse?" & "+spouse.firstName+" "+spouse.lastName:"");render();document.getElementById("main").scrollTop=0;}
@@ -1933,32 +1934,14 @@ function renderAnnouncePanel(){
 
 function addBabyFromAnnounce(){
   var parentId=ANNOUNCE_STATE&&ANNOUNCE_STATE.pid?+ANNOUNCE_STATE.pid:null;
-  var type=ANNOUNCE_STATE?ANNOUNCE_STATE.type:"birth_boy";
   closeAnnounce();
-  var parent=parentId?P.find(function(x){return +x.id===parentId;}):null;
-  var spouse=parent&&parent.spouseId?P.find(function(x){return +x.id===+parent.spouseId;}):null;
-  var dad=parent.gender==="Male"?parent:spouse;
-  var mom=parent.gender==="Female"?parent:spouse;
-  // Set up add person form with parents pre-filled
-  FP=null;ADDSPOUSEFOR=null;
-  FORM=blank();
-  FORM.gender=type==="birth_boy"?"Male":"Female";
-  if(dad){FORM.fatherId=dad.id;}
-  if(mom){FORM.motherId=mom.id;}
-  if(dad&&mom){
-    var c=dad.code.split(".");
-    // Will auto-generate code when parents are set
+  if(parentId){
+    // Reuse addChild which already handles all the logic correctly
+    addChild(parentId);
+  } else {
+    // No parent selected — just open blank add form
+    gv("add");
   }
-  VIEW="add";
-  render();
-  // Auto-trigger parent selection to generate code
-  if(dad){
-    setTimeout(function(){
-      var fs=document.getElementById("father-sel");
-      if(fs){fs.value=dad.id;fs.dispatchEvent(new Event("change"));}
-    },100);
-  }
-  toast("Fill in baby's name and details",false);
 }
 
 
@@ -2364,6 +2347,7 @@ function buildPersonalSendsHTML(msg){
     render();
   });
 })();
+
 
 
 
