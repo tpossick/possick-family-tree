@@ -158,6 +158,7 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -1711,114 +1712,213 @@ function channelIcon(p){
 }
 
 // ── ANNOUNCEMENT PANEL ────────────────────────────────
-function showAnnounce(type, pid){
-  ANNOUNCE_STATE={type:type||"birth_boy",pid:pid||null,p2name:"",extra:"",msg:""};
-  rebuildAnnounceMsg();
+
+function showAnnounce(type){
+  ANNOUNCE_STATE={type:type||"birth_boy",pid:null,p2name:"",extra:"",msg:""};
   var panel=document.getElementById("announce-panel");
   if(!panel){
     panel=document.createElement("div");
     panel.id="announce-panel";
-    panel.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:flex-start;justify-content:center;padding-top:40px;box-sizing:border-box;overflow-y:auto";
+    panel.style.cssText="position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:9000;display:flex;align-items:flex-start;justify-content:center;padding-top:30px;box-sizing:border-box;overflow-y:auto";
     document.body.appendChild(panel);
   }
   renderAnnouncePanel();
+  setTimeout(function(){
+    var inp=document.getElementById("ann-search");
+    if(inp)inp.focus();
+  },100);
 }
-function closeAnnounce(){
-  ANNOUNCE_STATE=null;
-  var p=document.getElementById("announce-panel");
-  if(p)p.remove();
+
+function announceSearchUpdate(){
+  var inp=document.getElementById("ann-search");
+  if(!inp)return;
+  var val=inp.value;
+  var rd=document.getElementById("ann-search-results");
+  if(!rd)return;
+  if(!val||val.length<1){rd.innerHTML="";return;}
+  var q=val.toLowerCase();
+  var hits=P.filter(function(x){
+    return ((x.firstName||"")+" "+(x.lastName||"")).toLowerCase().indexOf(q)>=0;
+  }).slice(0,12);
+  if(!hits.length){rd.innerHTML="<div style='padding:8px 10px;color:#aaa;font-size:13px'>No matches</div>";return;}
+  rd.innerHTML=hits.map(function(x){
+    return "<div onclick='announceSelectPerson("+x.id+")' "
+      +"style='padding:7px 12px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px'>"
+      +esc(x.firstName+" "+x.lastName)
+      +"<span style='color:#aaa;font-size:11px;margin-left:6px'>("+esc(x.code||"")+")</span>"
+      +"</div>";
+  }).join("");
 }
+
+function announceSelectPerson(pid){
+  ANNOUNCE_STATE.pid=pid;
+  rebuildAnnounceMsg();
+  // Update name display without full re-render
+  var p=P.find(function(x){return x.id===pid;});
+  var inp=document.getElementById("ann-search");
+  var rd=document.getElementById("ann-search-results");
+  if(inp&&p)inp.value=p.firstName+" "+p.lastName;
+  if(rd)rd.innerHTML="";
+  // Update message
+  var ta=document.getElementById("ann-msg");
+  if(ta)ta.value=ANNOUNCE_STATE.msg;
+  updateAnnounceLinks();
+}
+
+function announceCasualCouple(p){
+  // Get couple names: "Sruly & Brocha Fishman"
+  var spouse=p.spouseId?P.find(function(x){return +x.id===+p.spouseId;}):null;
+  var dad=p.gender==="Male"?p:spouse;
+  var mom=p.gender==="Female"?p:spouse;
+  var dadName=dad?(dad.parentsName&&dad.parentsName.indexOf("&")<0&&dad.parentsName.trim()?dad.parentsName.trim():dad.nickName&&!isHonorific(dad.nickName)?dad.nickName:dad.firstName):"";
+  var momName=mom?(mom.parentsName&&mom.parentsName.indexOf("&")<0&&mom.parentsName.trim()?mom.parentsName.trim():mom.nickName&&!isHonorific(mom.nickName)?mom.nickName:mom.firstName):"";
+  var ln=dad?dad.lastName:mom?mom.lastName:"";
+  if(dadName&&momName)return dadName+" & "+momName+" "+ln;
+  if(dadName)return dadName+" "+ln;
+  if(momName)return momName+" "+ln;
+  return (p.firstName||"")+" "+(p.lastName||"");
+}
+
 function rebuildAnnounceMsg(){
-  if(!ANNOUNCE_STATE)return;
   var s=ANNOUNCE_STATE;
-  var p=s.pid?P.find(x=>x.id===s.pid):null;
-  var par=p?personParents(p):null;
-  var coupleStr=par?casualCouple(par.dad,par.mom):"";
-  var pname=p?casualFirst(p):"";
+  var p=s.pid?P.find(function(x){return x.id===s.pid;}):null;
   var msg="";
-  if(s.type==="birth_boy"){
-    msg=coupleStr?"Mazel Tov to "+coupleStr+" on the birth of a baby boy!":"Mazel Tov on the birth of a baby boy!";
-    if(pname&&pname!==p.firstName)msg+=" His name is "+pname+"!";
-    msg+=" 🎉";
-  } else if(s.type==="birth_girl"){
-    msg=coupleStr?"Mazel Tov to "+coupleStr+" on the birth of a baby girl!":"Mazel Tov on the birth of a baby girl!";
-    if(pname&&pname!==p.firstName)msg+=" Her name is "+pname+"!";
-    msg+=" 🎉";
+  var extra=s.extra?"\n"+s.extra:"";
+  if(s.type==="birth_boy"||s.type==="birth_girl"){
+    var sex=s.type==="birth_boy"?"baby boy \uD83D\uDC76":"baby girl \uD83D\uDC67";
+    if(p){
+      var couple=announceCasualCouple(p);
+      msg="Mazel Tov to "+couple+" on the birth of a "+sex+"! \uD83C\uDF89"+extra;
+    } else {
+      msg="Mazel Tov on the birth of a "+sex+"! \uD83C\uDF89"+extra;
+    }
   } else if(s.type==="engagement"){
-    var who=pname||(p?(p.firstName):"[name]");
-    var gender=p&&p.gender==="Female"?"her":"his";
-    var to=s.p2name?(" to "+s.p2name):"";
-    msg="Mazel Tov to "+who+" on "+gender+" engagement"+to+"! 🎊";
+    if(p){
+      var pname=p.parentsName&&p.parentsName.indexOf("&")<0&&p.parentsName.trim()?p.parentsName.trim():p.nickName&&!isHonorific(p.nickName)?p.nickName:p.firstName;
+      var hisher=p.gender==="Female"?"her":"his";
+      msg="Mazel Tov to "+pname+" on "+hisher+" engagement! \uD83D\uDC8D"+extra;
+    } else {
+      msg="Mazel Tov on the engagement! \uD83D\uDC8D"+extra;
+    }
   } else if(s.type==="wedding"){
-    var who2=pname||(p?p.firstName:"[name]");
-    var to2=s.p2name?" and "+s.p2name:"";
-    msg="Mazel Tov to "+who2+to2+" on their wedding! 🎉💍";
-  } else if(s.type==="custom"){
-    msg=s.msg||"";
+    if(p){
+      var couple2=announceCasualCouple(p);
+      msg="Mazel Tov to "+couple2+" on their wedding! \uD83C\uDF8A"+extra;
+    } else {
+      msg="Mazel Tov on the wedding! \uD83C\uDF8A"+extra;
+    }
+  } else {
+    msg=s.msg||extra;
   }
-  if(s.type!=="custom")s.msg=msg+(s.extra?"\n\n"+s.extra:"");
-  else if(!s.msg)s.msg="";
+  if(!s.msgEdited)s.msg=msg;
 }
+
+function updateAnnounceLinks(){
+  var msg=ANNOUNCE_STATE.msg||"";
+  var enc=encodeURIComponent(msg);
+  var wa=document.getElementById("ann-wa");
+  if(wa)wa.href="https://wa.me/?text="+enc;
+  var em=document.getElementById("ann-email");
+  if(em)em.href="mailto:?subject=Family+Announcement&body="+enc;
+}
+
 function renderAnnouncePanel(){
   var panel=document.getElementById("announce-panel");
   if(!panel||!ANNOUNCE_STATE)return;
   var s=ANNOUNCE_STATE;
-  var searchRes="";
-  if(s.search&&s.search.length>1){
-    var hits=P.filter(function(x){
-      return (x.firstName+" "+x.lastName).toLowerCase().includes(s.search.toLowerCase());
-    }).slice(0,8);
-    searchRes=hits.map(function(x){
-      return "<div onclick='ANNOUNCE_STATE.pid="+x.id+";ANNOUNCE_STATE.search=\"\";rebuildAnnounceMsg();renderAnnouncePanel()' "
-        +"style='padding:6px 10px;cursor:pointer;border-bottom:1px solid #eee;font-size:13px' "
-        +"onmouseover='this.style.background=\"#f0f4ff\"' onmouseout='this.style.background=\"\"'>"
-        +esc(x.firstName)+" "+esc(x.lastName)+"</div>";
-    }).join("");
-  }
-  var selPerson=s.pid?P.find(x=>x.id===s.pid):null;
-  var types=[["birth_boy","👶 Boy Birth"],["birth_girl","👶 Girl Birth"],["engagement","💍 Engagement"],
-             ["wedding","🎊 Wedding"],["custom","✏️ Custom"]];
-  var typeHTML=types.map(function(t){
-    return "<button onclick='ANNOUNCE_STATE.type=\""+t[0]+"\";rebuildAnnounceMsg();renderAnnouncePanel()' "
-      +"style='padding:5px 10px;margin:2px;border-radius:4px;border:none;cursor:pointer;"
-      +(s.type===t[0]?"background:#1a2744;color:white":"background:#e8e8e8;color:#333")+"'>"
-      +t[1]+"</button>";
-  }).join("");
-  var fullMsg=s.msg||"";
-  var msgEncoded=encodeURIComponent(fullMsg);
-  panel.innerHTML="<div style='background:white;border-radius:10px;width:min(520px,96vw);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.3)'>"
+  rebuildAnnounceMsg();
+  var p=s.pid?P.find(function(x){return x.id===s.pid;}):null;
+  var msg=s.msg||"";
+  var enc=encodeURIComponent(msg);
+  var typeBtn=function(t,label){
+    var active=s.type===t;
+    return "<button onclick=\"ANNOUNCE_STATE.type='"+t+"';ANNOUNCE_STATE.msgEdited=false;rebuildAnnounceMsg();var ta=document.getElementById('ann-msg');if(ta)ta.value=ANNOUNCE_STATE.msg;updateAnnounceLinks()\" "
+      +"style='padding:6px 12px;margin:2px;border-radius:5px;border:none;cursor:pointer;"
+      +(active?"background:#1a2744;color:white":"background:#e8e4dc;color:#333")+"'>"+label+"</button>";
+  };
+  var isBirth=s.type==="birth_boy"||s.type==="birth_girl";
+  panel.innerHTML="<div style='background:white;border-radius:10px;width:min(520px,96vw);padding:20px;box-shadow:0 8px 32px rgba(0,0,0,.3);margin-bottom:30px'>"
     +"<div style='display:flex;justify-content:space-between;align-items:center;margin-bottom:14px'>"
-    +"<h3 style='margin:0;color:#1a2744'>📢 Family Announcement</h3>"
-    +"<button onclick='closeAnnounce()' style='background:none;border:none;font-size:20px;cursor:pointer'>✕</button>"
+    +"<h3 style='margin:0;color:#1a2744'>&#128226; Family Announcement</h3>"
+    +"<button onclick='closeAnnounce()' style='background:none;border:none;font-size:20px;cursor:pointer'>&#10005;</button>"
     +"</div>"
-    +"<div style='margin-bottom:12px'>"+typeHTML+"</div>"
-    +(s.type!=="custom"?"<div style='margin-bottom:10px'><label style='font-size:11px;font-weight:bold;color:#666'>PERSON (optional)</label>"
+    // Type buttons - simplified to 4
+    +"<div style='margin-bottom:14px'>"
+    +typeBtn("birth_boy","&#128118; Baby Boy")
+    +typeBtn("birth_girl","&#128119; Baby Girl")
+    +typeBtn("engagement","&#128141; Engagement")
+    +typeBtn("custom","&#9999;&#65039; Custom")
+    +"</div>"
+    // Person search
+    +(s.type!=="custom"?"<div style='margin-bottom:12px'>"
+    +"<label style='font-size:11px;font-weight:bold;color:#666'>"
+    +(isBirth?"PARENT (search for mom or dad)":s.type==="engagement"?"PERSON GETTING ENGAGED":"PERSON")
+    +"</label>"
     +"<div style='position:relative'>"
-    +"<input class='ffi' placeholder='Search family member...' value='"+(selPerson?esc(selPerson.firstName+" "+selPerson.lastName):(s.search||""))+"' "
-    +"oninput='ANNOUNCE_STATE.search=this.value;ANNOUNCE_STATE.pid=null;renderAnnouncePanel()' style='width:100%;box-sizing:border-box'>"
-    +(searchRes?"<div style='position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;z-index:10;max-height:200px;overflow-y:auto'>"+searchRes+"</div>":"")
-    +"</div></div>":""  )
-    +(s.type==="engagement"||s.type==="wedding"?"<div style='margin-bottom:10px'><label style='font-size:11px;font-weight:bold;color:#666'>OTHER PERSON'S NAME</label>"
-    +"<input class='ffi' placeholder='e.g., Chana Goldberg' value='"+esc(s.p2name||"")+"' "
-    +"oninput='ANNOUNCE_STATE.p2name=this.value;rebuildAnnounceMsg();renderAnnouncePanel()' style='width:100%;box-sizing:border-box'></div>":""  )
-    +"<div style='margin-bottom:10px'><label style='font-size:11px;font-weight:bold;color:#666'>MESSAGE</label>"
-    +"<textarea id='ann-msg' rows='4' style='width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px;border:1px solid #ccc;border-radius:4px' "
-    +"oninput='ANNOUNCE_STATE.msg=this.value'>"+(fullMsg)+"</textarea></div>"
-    +(s.type!=="custom"?"<div style='margin-bottom:12px'><label style='font-size:11px;font-weight:bold;color:#666'>PARTY / EXTRA DETAILS (optional)</label>"
-    +"<input class='ffi' placeholder='e.g., Shalom Zachor Friday night at 123 Main St' value='"+esc(s.extra||"")+"' "
-    +"oninput='ANNOUNCE_STATE.extra=this.value;rebuildAnnounceMsg();renderAnnouncePanel()' style='width:100%;box-sizing:border-box'></div>":""  )
-    +"<div style='display:flex;flex-wrap:wrap;gap:8px'>"
-    +"<button onclick='navigator.clipboard.writeText(document.getElementById(\"ann-msg\").value);toast(\"Copied!\",false)' "
-    +"style='flex:1;min-width:120px;padding:8px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>📋 Copy Group 1</button>"
-    +"<button onclick='navigator.clipboard.writeText(document.getElementById(\"ann-msg\").value);toast(\"Copied!\",false)' "
-    +"style='flex:1;min-width:120px;padding:8px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>📋 Copy Group 2</button>"
-    +"<a href='https://wa.me/?text="+msgEncoded+"' target='_blank' "
-    +"style='flex:1;min-width:120px;padding:8px;background:#25D366;color:white;border-radius:5px;text-decoration:none;text-align:center;cursor:pointer'>📱 WhatsApp</a>"
-    +"<a href='mailto:?body="+msgEncoded+"' "
-    +"style='flex:1;min-width:120px;padding:8px;background:#555;color:white;border-radius:5px;text-decoration:none;text-align:center;cursor:pointer'>📧 Email</a>"
+    +"<input id='ann-search' class='ffi' placeholder='Type name...' value='"+(p?esc(p.firstName+" "+p.lastName):"")+"' "
+    +"oninput='announceSearchUpdate()' style='width:100%;box-sizing:border-box'>"
+    +"<div id='ann-search-results' style='position:absolute;top:100%;left:0;right:0;background:white;border:1px solid #ccc;border-radius:4px;z-index:20;max-height:200px;overflow-y:auto'></div>"
     +"</div>"
+    +(p&&isBirth?"<div style='font-size:11px;color:#666;margin-top:4px'>&#10003; Will use: <em>"+esc(announceCasualCouple(p))+"</em></div>":"")
+    +"</div>":"")
+    // Extra details
+    +(s.type!=="custom"?"<div style='margin-bottom:12px'>"
+    +"<label style='font-size:11px;font-weight:bold;color:#666'>EXTRA DETAILS (optional)</label>"
+    +"<input class='ffi' id='ann-extra' placeholder='e.g., Shalom Zachor Friday night, 123 Main St' value='"+esc(s.extra||"")+"' "
+    +"oninput=\"ANNOUNCE_STATE.extra=this.value;ANNOUNCE_STATE.msgEdited=false;rebuildAnnounceMsg();var ta=document.getElementById('ann-msg');if(ta)ta.value=ANNOUNCE_STATE.msg\" "
+    +"style='width:100%;box-sizing:border-box'></div>":"")
+    // Message
+    +"<div style='margin-bottom:14px'>"
+    +"<label style='font-size:11px;font-weight:bold;color:#666'>MESSAGE (editable)</label>"
+    +"<textarea id='ann-msg' rows='4' style='width:100%;box-sizing:border-box;font-family:inherit;font-size:13px;padding:8px;border:1px solid #ccc;border-radius:4px' "
+    +"oninput=\"ANNOUNCE_STATE.msg=this.value;ANNOUNCE_STATE.msgEdited=true;updateAnnounceLinks()\">"+esc(msg)+"</textarea>"
+    +"</div>"
+    // Send buttons
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px'>"
+    +"<button onclick=\"navigator.clipboard.writeText(document.getElementById('ann-msg').value);toast('Copied for Group 1!',false)\" "
+    +"style='padding:9px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>&#128203; Copy — Group 1</button>"
+    +"<button onclick=\"navigator.clipboard.writeText(document.getElementById('ann-msg').value);toast('Copied for Group 2!',false)\" "
+    +"style='padding:9px;background:#1a2744;color:white;border:none;border-radius:5px;cursor:pointer'>&#128203; Copy — Group 2</button>"
+    +"<a id='ann-wa' href='https://wa.me/?text="+enc+"' target='_blank' "
+    +"style='padding:9px;background:#25D366;color:white;border-radius:5px;text-decoration:none;text-align:center'>&#128241; WhatsApp Share</a>"
+    +"<a id='ann-email' href='mailto:?subject=Family+Announcement&body="+enc+"' "
+    +"style='padding:9px;background:#555;color:white;border-radius:5px;text-decoration:none;text-align:center'>&#128231; Email</a>"
+    +"</div>"
+    // Add to family tree (birth only)
+    +(isBirth&&p?"<button onclick='closeAnnounce();addBabyFromAnnounce("+p.id+",\""+s.type+"\")' "
+    +"style='width:100%;padding:9px;background:#2e7d32;color:white;border:none;border-radius:5px;cursor:pointer;font-size:13px'>"
+    +"&#10133; Add Baby to Family Tree</button>":"")
     +"</div>";
 }
+
+function addBabyFromAnnounce(parentId, type){
+  var parent=P.find(function(x){return x.id===parentId;});
+  if(!parent)return;
+  var spouse=parent.spouseId?P.find(function(x){return +x.id===+parent.spouseId;}):null;
+  var dad=parent.gender==="Male"?parent:spouse;
+  var mom=parent.gender==="Female"?parent:spouse;
+  // Set up add person form with parents pre-filled
+  FP=null;ADDSPOUSEFOR=null;
+  FORM=blank();
+  FORM.gender=type==="birth_boy"?"Male":"Female";
+  if(dad){FORM.fatherId=dad.id;}
+  if(mom){FORM.motherId=mom.id;}
+  if(dad&&mom){
+    var c=dad.code.split(".");
+    // Will auto-generate code when parents are set
+  }
+  VIEW="add";
+  render();
+  // Auto-trigger parent selection to generate code
+  if(dad){
+    setTimeout(function(){
+      var fs=document.getElementById("father-sel");
+      if(fs){fs.value=dad.id;fs.dispatchEvent(new Event("change"));}
+    },100);
+  }
+  toast("Fill in baby's name and details",false);
+}
+
 
 // ── NOTIFICATION QUEUE ────────────────────────────────
 async function showNotify(){
@@ -2180,6 +2280,7 @@ function rptShowContacts(sortBy){
     render();
   });
 })();
+
 
 
 
