@@ -159,6 +159,10 @@ tbody tr:hover td{background:#e8e0cc;cursor:pointer;}
 
 
 
+
+
+
+
 // Month order: Nisan=1...Adar=12 (covers Adar I & II)
 const MO={Nisan:1,Iyyar:2,Iyar:2,Sivan:3,Tamuz:4,Tammuz:4,Av:5,Elul:6,Tishrei:7,Cheshvan:8,Kislev:9,Tevet:10,"Sh'vat":11,Shvat:11,Adar:12,"Adar I":12,"Adar II":12};
 const HEB_MO=[{n:1,en:"Nisan",he:"ניסן"},{n:2,en:"Iyar",he:"אייר"},{n:3,en:"Sivan",he:"סיון"},{n:4,en:"Tammuz",he:"תמוז"},{n:5,en:"Av",he:"אב"},{n:6,en:"Elul",he:"אלול"},{n:7,en:"Tishrei",he:"תשרי"},{n:8,en:"Cheshvan",he:"חשון"},{n:9,en:"Kislev",he:"כסלו"},{n:10,en:"Tevet",he:"טבת"},{n:11,en:"Shvat",he:"שבט"},{n:12,en:"Adar",he:"אדר"}];
@@ -1752,17 +1756,9 @@ function announceSearchUpdate(){
 
 function announceSelectPerson(pid){
   ANNOUNCE_STATE.pid=pid;
-  rebuildAnnounceMsg();
-  // Update name display without full re-render
-  var p=P.find(function(x){return x.id===pid;});
-  var inp=document.getElementById("ann-search");
-  var rd=document.getElementById("ann-search-results");
-  if(inp&&p)inp.value=p.firstName+" "+p.lastName;
-  if(rd)rd.innerHTML="";
-  // Update message
-  var ta=document.getElementById("ann-msg");
-  if(ta)ta.value=ANNOUNCE_STATE.msg;
-  updateAnnounceLinks();
+  ANNOUNCE_STATE.msgEdited=false;
+  renderAnnouncePanel(); // full re-render so green button + confirmation appear
+  setTimeout(function(){var inp=document.getElementById('ann-search');var p=P.find(function(x){return x.id===pid;});if(inp&&p)inp.value=p.firstName+' '+p.lastName;},10);
 }
 
 function announceCasualCouple(p){
@@ -1796,7 +1792,7 @@ function rebuildAnnounceMsg(){
     if(p){
       var pname=p.parentsName&&p.parentsName.indexOf("&")<0&&p.parentsName.trim()?p.parentsName.trim():p.nickName&&!isHonorific(p.nickName)?p.nickName:p.firstName;
       var hisher=p.gender==="Female"?"her":"his";
-      msg="Mazel Tov to "+pname+" on "+hisher+" engagement! \uD83D\uDC8D"+extra;
+      msg="Mazel Tov to "+pname+" "+p.lastName+" on "+hisher+" engagement! \uD83D\uDC8D"+extra;
     } else {
       msg="Mazel Tov on the engagement! \uD83D\uDC8D"+extra;
     }
@@ -1822,6 +1818,34 @@ function updateAnnounceLinks(){
   if(em)em.href="mailto:?subject=Family+Announcement&body="+enc;
 }
 
+
+function buildPersonalSendsHTML(msg){
+  // Build personal send buttons for key contacts using contact list
+  var enc=encodeURIComponent(msg);
+  // Send to: Abba, Mummy, plus any parents of the selected person
+  var targets=[];
+  // Always include gen-0 (Abba & Mummy)
+  P.filter(function(p){return p.generation===0&&(p.phone||p.email);}).forEach(function(p){
+    targets.push(p);
+  });
+  if(!targets.length)return "";
+  var btns=targets.map(function(p){
+    var ch=p.contactChannel||"";
+    var phone=(p.phone||"").replace(/\D/g,"");
+    var link="";
+    if(ch==="whatsapp"&&phone)link="https://wa.me/"+phone+"?text="+enc;
+    else if(ch==="text"&&phone)link="sms:+"+phone+"?body="+enc;
+    else if(ch==="email"&&p.email)link="mailto:"+p.email+"?subject=Family+Announcement&body="+enc;
+    else if(phone)link="https://wa.me/"+phone+"?text="+enc;
+    else if(p.email)link="mailto:"+p.email+"?subject=Family+Announcement&body="+enc;
+    if(!link)return "";
+    var icon=ch==="email"?"&#128231;":ch==="text"?"&#128172;":"&#128241;";
+    return "<a href='"+link+"' target='_blank' style='display:block;padding:7px 10px;background:#f0f4ff;border:1px solid #cce;border-radius:5px;text-decoration:none;color:#1a2744;font-size:12px;text-align:center'>"+icon+" Send to "+esc(p.firstName)+"</a>";
+  }).filter(Boolean).join("");
+  if(!btns)return "";
+  return "<div style='margin-top:10px'><div style='font-size:11px;font-weight:bold;color:#666;margin-bottom:6px'>SEND PERSONALLY</div>"
+    +"<div style='display:grid;grid-template-columns:1fr 1fr;gap:6px'>"+btns+"</div></div>";
+}
 function renderAnnouncePanel(){
   var panel=document.getElementById("announce-panel");
   if(!panel||!ANNOUNCE_STATE)return;
@@ -1888,6 +1912,7 @@ function renderAnnouncePanel(){
     +(isBirth&&p?"<button onclick='closeAnnounce();addBabyFromAnnounce("+p.id+",\""+s.type+"\")' "
     +"style='width:100%;padding:9px;background:#2e7d32;color:white;border:none;border-radius:5px;cursor:pointer;font-size:13px'>"
     +"&#10133; Add Baby to Family Tree</button>":"")
+    +buildPersonalSendsHTML(msg)
     +"</div>";
 }
 
@@ -1965,6 +1990,11 @@ async function showNotify(){
     return;
   }
   renderNotifyPanel(today,tom,todayHeb,tomHeb);
+}
+function closeAnnounce(){
+  var p=document.getElementById("announce-panel");
+  if(p)p.remove();
+  ANNOUNCE_STATE=null;
 }
 function closeNotify(){
   NOTIFY_OPEN=false;
@@ -2249,6 +2279,43 @@ function rptShowContacts(sortBy){
   if(m){m.innerHTML=rptContacts(sortBy);RTAB="contacts";}
 }
 
+function buildPersonalSendsHTML(msg){
+  var enc=encodeURIComponent(msg);
+  var contacts=P.filter(function(p){return p.phone||p.email;})
+    .sort(function(a,b){return (a.code||"").localeCompare(b.code||"");});
+  if(!contacts.length)return "";
+  function sendLink(p){
+    var ch=p.contactChannel||"";
+    var phone=(p.phone||"").replace(/\D/g,"");
+    if(ch==="whatsapp"&&phone)return "https://wa.me/"+phone+"?text="+enc;
+    if(ch==="text"&&phone)return "sms:+"+phone+"?body="+enc;
+    if(ch==="email"&&p.email)return "mailto:"+p.email+"?subject=Family+Announcement&body="+enc;
+    if(phone)return "https://wa.me/"+phone+"?text="+enc;
+    if(p.email)return "mailto:"+p.email+"?subject=Family+Announcement&body="+enc;
+    return null;
+  }
+  function chLabel(p){
+    var ch=p.contactChannel||"";
+    if(ch==="whatsapp")return "WhatsApp";
+    if(ch==="text")return "Text";
+    if(ch==="email")return "Email";
+    return p.phone?"WhatsApp":p.email?"Email":"";
+  }
+  var rows=contacts.map(function(p){
+    var link=sendLink(p);
+    if(!link)return "";
+    return "<div style='display:flex;align-items:center;justify-content:space-between;padding:5px 0;border-bottom:1px solid #f0ede6'>"
+      +"<span style='font-size:12px'>"+esc(p.firstName+" "+p.lastName)+"</span>"
+      +"<a href='"+link+"' target='_blank' style='font-size:11px;padding:3px 10px;background:#1a2744;color:white;border-radius:4px;text-decoration:none'>Send via "+chLabel(p)+"</a>"
+      +"</div>";
+  }).filter(Boolean).join("");
+  if(!rows)return "";
+  return "<details style='margin-top:12px'>"
+    +"<summary style='cursor:pointer;font-size:11px;font-weight:bold;color:#666;padding:4px 0'>SEND PERSONALLY FROM CONTACT LIST ("+contacts.length+" people)</summary>"
+    +"<div style='max-height:250px;overflow-y:auto;margin-top:8px;padding:0 4px'>"+rows+"</div>"
+    +"</details>";
+}
+
 (function startApp(){
   var ok=initFirebase();
   if(!ok){render();return;}
@@ -2280,6 +2347,10 @@ function rptShowContacts(sortBy){
     render();
   });
 })();
+
+
+
+
 
 
 
